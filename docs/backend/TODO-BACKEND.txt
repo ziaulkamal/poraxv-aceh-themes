@@ -1,0 +1,95 @@
+==========================================================================
+ TODO — INTEGRASI FRONTEND PORA XV (PoraAcehJaya-FE)
+ Repo ini = presentasi murni. Backend kerja ada di cms-media; simpora2026 dipakai apa adanya.
+ Stack FE: React 19 + Vite + React Router + (BARU) React Query + socket.io-client.
+ Legenda:  [ ] belum   [~] sedang   [x] selesai
+ Acuan: PRD-BACKEND-ADMIN.md (v2) | ALUR-KERJA.md
+ Per-repo todos: cms-media/todos.txt (FASE 10) · simpora2026/todos.txt · starter-laravel-tailwindcss/todos.txt
+==========================================================================
+
+ PRINSIP (penegasan user 2026-06-06):
+ - cms-media = rumah SEMUA pekerjaan baru (gallery, kontak, live stream, komentar, real-time, venue enrichment).
+ - simpora2026 = API murni, TIDAK diubah (kecuali CORS allow origin FE).
+ - starter-laravel-tailwindcss = TIDAK diubah.
+ - Penambahan modul simpora2026 / perubahan starter-laravel WAJIB di-flag dulu.
+
+--------------------------------------------------------------------------
+ FE-0 — FONDASI LAPISAN DATA (prasyarat semua)
+--------------------------------------------------------------------------
+[ ] Tambah dependency: @tanstack/react-query  axios  socket.io-client
+[ ] src/lib/api/simpora.ts  (baseURL VITE_SIMPORA_API_URL, ekstraksi paginator defensif)
+[ ] src/lib/api/cms.ts      (baseURL VITE_CMS_API_URL, envelope {success,data,meta})
+[ ] src/lib/api/socket.ts   (io(VITE_CMS_WS_URL), reconnect)
+[ ] src/lib/api/adapters/{sports.ts, media.ts}  -> map ke tipe di src/types
+[ ] src/lib/api/hooks/      (React Query hooks per entitas)
+[ ] QueryClientProvider di src/main.tsx
+[ ] .env: VITE_SIMPORA_API_URL, VITE_CMS_API_URL, VITE_CMS_WS_URL
+[ ] util tanggal id-ID + WALL-CLOCK parser (scheduled_at: JANGAN new Date(ISO))
+
+--------------------------------------------------------------------------
+ FE-1 — KONTEN cms (read, dependensi rendah)
+--------------------------------------------------------------------------
+[ ] useSettings()  -> ganti objek `event` & `socials` (Hero, CountdownTimer, Footer, TentangPora)
+[ ] usePage(slug)  -> SyaratKetentuanPage, KebijakanCookiePage (render body blok)
+[ ] useBerita()    -> Berita.tsx (section) + BeritaPage  (adapter media)
+[ ] useArtikel(slug) -> ArtikelPage  (isi blok paragraf/subjudul/kutipan, durasiBaca dihitung)
+
+--------------------------------------------------------------------------
+ FE-2 — INTERAKSI cms (tulis publik)
+--------------------------------------------------------------------------
+[ ] useKomentar(slug) (tree) + mutasi kirim + suka -> KomentarSection.tsx
+[ ] Notice "menunggu moderasi" setelah submit komentar (bukan optimistik tampil)
+[ ] kirimKontak() mutation -> KontakPage.tsx (state sukses sudah ada)
+[ ] useGaleri() -> GaleriPage (mosaic + feed IG + lightbox), adapter Foto
+
+--------------------------------------------------------------------------
+ FE-3 — DATA OLAHRAGA (simpora read, belum real-time)
+--------------------------------------------------------------------------
+[ ] useCabor()    -> CabangOlahraga.tsx / CaborCard (ikon: maskot API atau fallback bundel FE)
+[ ] useVenue()    -> Venue.tsx / VenuePage / VenueCard (core dari simpora)
+[ ] useVenueContent() (cms) -> gabung deskripsi+foto ke detail venue
+[ ] useJadwal()   -> JadwalRingkas.tsx (WALL-CLOCK)
+[ ] useKlasemen() -> KlasemenMedali.tsx / KlasemenPage
+[ ] useLiveSkor() -> LivePage (daftar pertandingan + result + set/game)
+[ ] Kontingen: PERTAHANKAN statis (src/data/kontingen.ts) atau derive nama dari leaderboard
+[ ] TentangPora stats: derive dari list yang sudah di-fetch
+
+--------------------------------------------------------------------------
+ FE-4 — LIVE STREAMING (cms, read)
+--------------------------------------------------------------------------
+[ ] useStreaming() -> { streaming_enabled, channels[] } -> LiveStreaming.tsx
+[ ] Render grid embed YouTube + status aktif/tentatif
+
+--------------------------------------------------------------------------
+ FE-5 — REAL-TIME (socket.io dari gateway cms-media)
+--------------------------------------------------------------------------
+[ ] socket.on('match.score.updated')  -> setQueryData(['match',id]) + invalidate(['matches','live'])
+[ ] socket.on('match.status.updated') -> pindah kartu antar grup status
+[ ] socket.on('leaderboard.updated')  -> invalidate(['leaderboard'])
+[ ] socket.on('streaming.toggled')    -> setQueryData(['streaming'])
+[ ] socket.on('stream.updated')       -> invalidate(['streaming'])
+[ ] socket.on('stream.viewers')       -> update angka penonton kartu
+[ ] Pasang listener di: LivePage, KlasemenPage, KlasemenMedali, LiveStreaming, JadwalRingkas
+[ ] refetchOnReconnect aktif; fallback cache saat socket putus
+[ ] UJI E2E: ubah skor di admin -> tampil di FE TANPA reload
+
+--------------------------------------------------------------------------
+ FE-6 — PENCARIAN GLOBAL (agregasi)
+--------------------------------------------------------------------------
+[ ] SearchModal: gabung cms /articles?q + simpora /sports,/venues,/matches + cms /live-streams
+[ ] Map ke Hasil{tipe,judul,sub,to,section?,streamId?}; debounce 250ms; max 8
+
+--------------------------------------------------------------------------
+ FE-7 — RAPIKAN & PRODUKSI
+--------------------------------------------------------------------------
+[ ] Semua fetch punya loading/empty/error state (tidak crash saat API/WS mati)
+[ ] Hapus/disable src/data/*.ts yang tak terpakai (kecuali kontingen.ts referensi statis)
+[ ] (opsional SEO) SSR/pre-render + BrowserRouter + sitemap.xml
+[ ] Smoke test seluruh halaman FE (light/dark, mobile)
+
+==========================================================================
+ KETERGANTUNGAN LINTAS-REPO (blocking)
+ - FE-1..FE-2  bergantung pada cms-media FASE 10 A-D (settings, comments, gallery, contact, pages).
+ - FE-4..FE-5  bergantung pada cms-media FASE 10 E-F (LiveStream + Realtime gateway).
+ - FE-3        bergantung pada simpora2026 menambah origin FE ke CORS (lihat simpora2026/todos.txt).
+==========================================================================
