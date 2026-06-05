@@ -4,7 +4,7 @@
  * agar demo tetap tampil (FE-7: UI tak boleh kosong/crash saat API mati).
  */
 import type { Berita, Cabor, EventInfo, JadwalItem, MedaliKontingen, Venue } from "../../../types";
-import type { Artikel, Pertandingan } from "../../../data/pages";
+import type { Artikel, Foto, Pertandingan } from "../../../data/pages";
 import type { Sosial } from "../../../data/content";
 import {
   beritaList,
@@ -15,9 +15,23 @@ import {
   socials as staticSocials,
   venueList as staticVenue,
 } from "../../../data/content";
-import { artikelList, pertandinganList as staticPertandingan } from "../../../data/pages";
+import {
+  artikelList,
+  galeriFoto as staticGaleri,
+  liveChannels as staticChannels,
+  pertandinganList as staticPertandingan,
+  streamingAktif as staticStreamingAktif,
+} from "../../../data/pages";
 import { SOCIAL_KEYS, settingsToSocialHref } from "../adapters/media";
-import { useBerita, useArtikelList, useEvent, useSettings } from "./media";
+import {
+  useArtikelList,
+  useBerita,
+  useEvent,
+  useGaleri,
+  useSettings,
+  useStreaming,
+} from "./media";
+import type { StreamingState } from "./media";
 import { useCabor, useJadwal, useKlasemen, useLiveSkor, useVenue } from "./sports";
 
 /** Identitas event: dari settings cms bila terisi, jika tidak pakai data statis. */
@@ -85,4 +99,17 @@ export function useKlasemenList(): MedaliKontingen[] {
 export function useLiveSkorList(): Pertandingan[] {
   const { data } = useLiveSkor();
   return data && data.length > 0 ? data : staticPertandingan;
+}
+
+/** Galeri foto (live atau statis). */
+export function useGaleriFoto(): Foto[] {
+  const { data } = useGaleri();
+  return data && data.length > 0 ? data : staticGaleri;
+}
+
+/** Status siaran: live bila backend hidup; statis (demo) saat backend mati. */
+export function useStreamingState(): StreamingState {
+  const { data } = useStreaming();
+  if (!data) return { enabled: staticStreamingAktif, channels: staticChannels };
+  return data;
 }

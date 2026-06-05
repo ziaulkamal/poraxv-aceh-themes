@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Eye, VideoOff, ExternalLink, Play, X, Radio } from "lucide-react";
 import { cn } from "../../lib/cn";
-import { streamingAktif, liveChannels, type LiveChannel } from "../../data/pages";
+import type { LiveChannel } from "../../data/pages";
+import { useStreamingState } from "../../lib/api/hooks";
 
 /** Logo YouTube (lucide build ini tak menyertakan ikon Youtube). */
 function YoutubeGlyph({ className }: { className?: string }) {
@@ -118,6 +119,7 @@ function StreamModal({
  * Tentatif — hanya tampil saat Panitia Besar mengaktifkan mode streaming.
  */
 export function LiveStreaming({ autoOpenId }: { autoOpenId?: string }) {
+  const { enabled: streamingAktif, channels: liveChannels } = useStreamingState();
   const [buka, setBuka] = useState<number | null>(null);
   // Lebih dari 4 saluran: gulir mendatar agar tidak menumpuk ke bawah.
   const scroll = liveChannels.length > 4;

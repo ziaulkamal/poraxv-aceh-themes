@@ -3,7 +3,8 @@ import { X, ChevronLeft, ChevronRight, Heart, MessageCircle, Grid3x3, LayoutGrid
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
 import { cn } from "../lib/cn";
-import { galeriFoto, type Foto } from "../data/pages";
+import type { Foto } from "../data/pages";
+import { useGaleriFoto } from "../lib/api/hooks";
 
 const aspekKustom: Record<Foto["orientasi"], string> = {
   potret: "aspect-[3/4]",
@@ -76,6 +77,7 @@ function Lightbox({
 
 /** Laman galeri dgn dua konsep: feed ala Instagram atau mosaic kustom PORA. */
 export function GaleriPage() {
+  const galeriFoto = useGaleriFoto();
   const [konsep, setKonsep] = useState<"ig" | "kustom">("kustom");
   const [lightbox, setLightbox] = useState<number | null>(null);
 
