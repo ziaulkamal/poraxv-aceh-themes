@@ -1,10 +1,10 @@
 /** src/lib/api/hooks/media.ts — hooks React Query untuk konten cms-media (read). */
-import { useQuery } from "@tanstack/react-query";
-import type { UseQueryResult } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import type { Berita, EventInfo } from "../../../types";
 import type { Artikel, Foto, Komentar } from "../../../data/pages";
 import type { LiveChannel } from "../../../data/pages";
-import { cmsGet, cmsList } from "../cms";
+import { cmsGet, cmsList, cmsPost } from "../cms";
 import { STALE } from "../queryClient";
 import { qk } from "../queryKeys";
 import {
@@ -132,5 +132,45 @@ export function useVenueContent(ref: string): UseQueryResult<RawVenueContent> {
     enabled: !!ref,
     staleTime: STALE.statis,
     queryFn: () => cmsGet<RawVenueContent>(`/venue-content/${encodeURIComponent(ref)}`),
+  });
+}
+
+/* --------------------------- Mutasi (tulis publik) --------------------------- */
+
+/** Payload kirim komentar publik (parentId untuk balasan). */
+export interface KirimKomentarInput {
+  authorName: string;
+  authorEmail: string;
+  body: string;
+  parentId?: string;
+}
+
+/** Kirim komentar (status PENDING moderasi) untuk sebuah artikel. */
+export function useKirimKomentar(slug: string): UseMutationResult<unknown, Error, KirimKomentarInput> {
+  return useMutation({
+    mutationFn: (input: KirimKomentarInput) => cmsPost(`/articles/${slug}/comments`, input),
+  });
+}
+
+/** Suka satu komentar (dedup device di backend). */
+export function useSukaKomentar(): UseMutationResult<unknown, Error, string> {
+  return useMutation({
+    mutationFn: (id: string) => cmsPost(`/comments/${id}/like`),
+  });
+}
+
+/** Payload kirim pesan kontak (`website` = honeypot, harus kosong). */
+export interface KirimKontakInput {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  website?: string;
+}
+
+/** Kirim pesan kontak ke inbox cms. */
+export function useKirimKontak(): UseMutationResult<unknown, Error, KirimKontakInput> {
+  return useMutation({
+    mutationFn: (input: KirimKontakInput) => cmsPost("/contact", input),
   });
 }

@@ -107,7 +107,7 @@ export function ArtikelPage() {
           </div>
 
           {/* Komentar pembaca */}
-          <KomentarSection />
+          <KomentarSection slug={artikel.slug} />
         </div>
       </Container>
 

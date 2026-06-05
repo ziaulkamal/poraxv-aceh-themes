@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
+import { useKirimKontak } from "../lib/api/hooks";
 
 const infoKontak = [
   { Icon: MapPin, label: "Alamat", isi: "Kantor Bupati Aceh Jaya, Calang, Kabupaten Aceh Jaya, Aceh 23654" },
@@ -16,9 +17,19 @@ const lapangan =
 /** Laman kontak: form pesan (demo state lokal) + informasi sekretariat panitia. */
 export function KontakPage() {
   const [terkirim, setTerkirim] = useState(false);
+  const kontak = useKirimKontak();
 
-  const kirim = (e: FormEvent) => {
+  /** Kirim ke inbox cms (best-effort); UI tetap menampilkan sukses. */
+  const kirim = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    kontak.mutate({
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      subject: String(fd.get("subject") ?? ""),
+      message: String(fd.get("message") ?? ""),
+      website: String(fd.get("website") ?? ""),
+    });
     setTerkirim(true);
   };
 
@@ -54,23 +65,32 @@ export function KontakPage() {
                 </div>
               ) : (
                 <form onSubmit={kirim} className="mt-6 space-y-4">
+                  {/* Honeypot anti-spam: disembunyikan dari pengguna, harus tetap kosong. */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                  />
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label className="block">
                       <span className="mb-1.5 block text-sm font-medium text-ink-soft">Nama</span>
-                      <input required placeholder="Nama lengkap" className={lapangan} />
+                      <input required name="name" placeholder="Nama lengkap" className={lapangan} />
                     </label>
                     <label className="block">
                       <span className="mb-1.5 block text-sm font-medium text-ink-soft">Email</span>
-                      <input required type="email" placeholder="email@contoh.com" className={lapangan} />
+                      <input required name="email" type="email" placeholder="email@contoh.com" className={lapangan} />
                     </label>
                   </div>
                   <label className="block">
                     <span className="mb-1.5 block text-sm font-medium text-ink-soft">Subjek</span>
-                    <input required placeholder="Perihal pesan" className={lapangan} />
+                    <input required name="subject" placeholder="Perihal pesan" className={lapangan} />
                   </label>
                   <label className="block">
                     <span className="mb-1.5 block text-sm font-medium text-ink-soft">Pesan</span>
-                    <textarea required rows={5} placeholder="Tulis pesan kamu…" className={`${lapangan} resize-y`} />
+                    <textarea required name="message" rows={5} placeholder="Tulis pesan kamu…" className={`${lapangan} resize-y`} />
                   </label>
                   <button
                     type="submit"

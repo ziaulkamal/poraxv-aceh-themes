@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { MessageCircle, Heart, CornerDownRight, Send, X } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { komentarList, type Komentar } from "../../data/pages";
+import { useKirimKomentar, useKomentar, useSukaKomentar } from "../../lib/api/hooks";
 
 /* ----------------------------- util ----------------------------- */
 
@@ -245,23 +246,51 @@ function hitung(list: Komentar[]): number {
   return list.reduce((n, k) => n + 1 + hitung(k.balasan), 0);
 }
 
-/** Section komentar artikel: form (nama+email wajib), balasan, suka — demo lokal. */
-export function KomentarSection() {
+/** Section komentar artikel: baca tree cms (fallback demo), kirim → moderasi, suka. */
+export function KomentarSection({ slug }: { slug?: string }) {
+  const { data: live, isSuccess } = useKomentar(slug ?? "");
+  const kirim = useKirimKomentar(slug ?? "");
+  const suka = useSukaKomentar();
   const [daftar, setDaftar] = useState<Komentar[]>(komentarList);
   const [liked, setLiked] = useState<Set<string>>(new Set());
+  const [moderasi, setModerasi] = useState(false);
 
-  const tambahUtama = (nama: string, email: string, isi: string) =>
-    setDaftar((d) => [buatKomentar(nama, email, isi), ...d]);
+  // Pakai tree komentar dari API bila berhasil; jika tidak, pertahankan demo lokal.
+  useEffect(() => {
+    if (isSuccess && live) setDaftar(live);
+  }, [isSuccess, live]);
 
-  const tambahBalasan = (parentId: string, nama: string, email: string, isi: string) =>
-    setDaftar((d) => sisipBalasan(d, parentId, buatKomentar(nama, email, isi)));
+  // Live: kirim ke moderasi (tak langsung tampil). Backend mati: tambah lokal (demo).
+  const tambahUtama = (nama: string, email: string, isi: string) => {
+    if (!slug) return setDaftar((d) => [buatKomentar(nama, email, isi), ...d]);
+    kirim.mutate(
+      { authorName: nama, authorEmail: email, body: isi },
+      {
+        onSuccess: () => setModerasi(true),
+        onError: () => setDaftar((d) => [buatKomentar(nama, email, isi), ...d]),
+      },
+    );
+  };
 
-  const toggleSuka = (id: string) =>
+  const tambahBalasan = (parentId: string, nama: string, email: string, isi: string) => {
+    if (!slug) return setDaftar((d) => sisipBalasan(d, parentId, buatKomentar(nama, email, isi)));
+    kirim.mutate(
+      { authorName: nama, authorEmail: email, body: isi, parentId },
+      {
+        onSuccess: () => setModerasi(true),
+        onError: () => setDaftar((d) => sisipBalasan(d, parentId, buatKomentar(nama, email, isi))),
+      },
+    );
+  };
+
+  const toggleSuka = (id: string) => {
+    if (slug && !liked.has(id)) suka.mutate(id);
     setLiked((s) => {
       const n = new Set(s);
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
+  };
 
   return (
     <section className="mx-auto mt-12 max-w-3xl border-t border-ink/10 pt-10">
@@ -272,6 +301,12 @@ export function KomentarSection() {
           {hitung(daftar)}
         </span>
       </h2>
+
+      {moderasi && (
+        <div className="mt-6 rounded-lg bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau-deep">
+          Komentarmu terkirim dan menunggu moderasi sebelum ditampilkan.
+        </div>
+      )}
 
       <div className="mt-6">
         <KomentarForm onKirim={tambahUtama} />
