@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Landing page tema resmi PORA XV — Pekan Olahraga Aceh, Tuan Rumah Kabupaten Aceh Jaya.",
   "author": "Ziaul Kamal",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
