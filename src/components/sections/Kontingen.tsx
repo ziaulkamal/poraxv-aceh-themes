@@ -70,7 +70,7 @@ export function Kontingen() {
   const { ref, inView } = useInView<HTMLElement>(0.2);
 
   return (
-    <section ref={ref} className="bg-page-bg pb-6 pt-3 sm:pb-8 sm:pt-4">
+    <section id="kontingen" ref={ref} className="bg-page-bg pb-6 pt-3 sm:pb-8 sm:pt-4">
       <Container>
         {/* Rail gelap glassy: menjembatani nuansa Hero, tile putih jadi menonjol.
             --surface dikunci putih agar teks & tile tetap terang di kedua tema. */}

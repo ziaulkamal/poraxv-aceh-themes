@@ -21,6 +21,7 @@ const sosial = [Globe, Send, Mail];
 export function Footer() {
   return (
     <footer
+      id="footer"
       // Footer selalu berlatar gelap di kedua tema; kunci --surface ke putih agar
       // semua warna turunannya (teks, border, ikon) tetap terang di mode gelap.
       style={{ "--surface": "0 0% 100%" } as CSSProperties}

@@ -53,10 +53,20 @@
   --ink-muted:    220 6% 58%;
 }
 
+html {
+  /* Lompatan antar-section halus + ruang atas untuk navbar fixed. */
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: hsl(var(--page-bg));
   color: hsl(var(--ink));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
 /* === Animasi dekoratif Hero === */

@@ -104,16 +104,17 @@ export function Navbar() {
       {/* Padding luar memberi jarak tepi saat mengambang, hilang saat scroll. */}
       <div
         className={cn(
-          "transition-[padding] duration-300 ease-out",
+          "transition-[padding] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
           scrolled ? "px-0 pt-0" : "px-3 pt-3 sm:px-5 sm:pt-5"
         )}
       >
-        {/* Bar: bentuk & bayangan berubah mengikuti status scroll. */}
+        {/* Bar: lebar, bentuk & bayangan beralih mulus mengikuti status scroll.
+            max-w-full (bukan max-w-none) agar lebar ikut ter-animasi. */}
         <div
           className={cn(
-            "mx-auto overflow-hidden bg-surface/95 backdrop-blur-md transition-all duration-300 ease-out",
+            "mx-auto overflow-hidden bg-surface/95 backdrop-blur-md transition-[max-width,border-radius,box-shadow] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
             scrolled
-              ? "max-w-none rounded-b-[1.75rem] shadow-[0_14px_34px_-14px_hsl(320_5%_9%/0.4)]"
+              ? "max-w-full rounded-b-[1.75rem] rounded-t-none shadow-[0_14px_34px_-14px_hsl(320_5%_9%/0.4)]"
               : "max-w-6xl rounded-[1.75rem] shadow-panel ring-1 ring-ink/5"
           )}
         >

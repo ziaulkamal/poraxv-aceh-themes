@@ -1,5 +1,6 @@
 import { PageShell } from "./components/layout/PageShell";
 import { Navbar } from "./components/layout/Navbar";
+import { SectionNav } from "./components/layout/SectionNav";
 import { Footer } from "./components/layout/Footer";
 import { Hero } from "./components/sections/Hero";
 import { Kontingen } from "./components/sections/Kontingen";
@@ -26,6 +27,7 @@ export default function App() {
         <Berita />
       </main>
       <Footer />
+      <SectionNav />
     </PageShell>
   );
 }
