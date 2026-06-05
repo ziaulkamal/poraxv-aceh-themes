@@ -1,0 +1,90 @@
+/* =============================================================
+   globals.css — SUMBER TUNGGAL TEMA PORA (warna + font master).
+   Ubah hanya file ini untuk mengganti seluruh tampilan aplikasi.
+   Palet: Merah #DA341B · Emas #EB9F38 · Hijau #479561 ·
+          Hitam #171516 · Abu Muda #E6E2DD
+   ============================================================= */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* === WARNA MASTER — format channel "H S% L%" agar mendukung opacity === */
+  --page-bg:      33 15% 88%;    /* abu muda  #E6E2DD  latar aplikasi */
+  --surface:      0 0% 100%;     /* putih     #FFFFFF  panel & kartu */
+  --surface-soft: 33 18% 94%;    /* krem      #F4F1EC  section selang */
+  --surface-dark: 320 5% 9%;     /* hitam     #171516  panel gelap */
+
+  --merah:        9 79% 48%;     /* merah     #DA341B  PRIMER: CTA, aksen */
+  --merah-deep:   9 80% 39%;     /* merah tua #B12912  hover primer */
+  --emas:         35 82% 57%;    /* emas      #EB9F38  sorotan & medali emas */
+  --hijau:        111 100% 54%;  /* hijau neon #39FF14  sekunder, status */
+  --hijau-deep:   120 85% 38%;   /* hijau neon tua      hover sekunder */
+
+  --ink:          320 5% 9%;     /* hitam     #171516  heading */
+  --ink-soft:     220 6% 28%;    /* abu gelap          body text */
+  --ink-muted:    220 5% 52%;    /* abu                caption */
+
+  /* Warna medali untuk tabel klasemen */
+  --emas-medali:  35 82% 57%;    /* emas */
+  --perak:        210 13% 78%;   /* perak  #C0C7CE */
+  --perunggu:     27 48% 56%;    /* perunggu #C58A5B */
+
+  /* === FONT MASTER === */
+  --font-sans:    "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Oswald", "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  /* === RADIUS & SHADOW === */
+  --radius-lg:   20px;
+  --radius-md:   14px;
+  --radius-pill: 999px;
+  --shadow-card: 0 10px 28px hsl(320 5% 9% / 0.10);
+  --shadow-panel: 0 24px 70px hsl(320 5% 9% / 0.16);
+}
+
+/* Mode gelap opsional — cukup override variable yang sama. */
+.dark {
+  --page-bg:      320 5% 9%;
+  --surface:      320 6% 15%;     /* sedikit lebih terang dari page-bg agar kartu menonjol */
+  --surface-soft: 320 5% 19%;
+  --ink:          0 0% 96%;
+  --ink-soft:     220 8% 78%;
+  --ink-muted:    220 6% 58%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: hsl(var(--page-bg));
+  color: hsl(var(--ink));
+}
+
+/* === Animasi dekoratif Hero === */
+/* Glow brand mengambang lembut: pergeseran + denyut skala/opasitas. */
+@keyframes hero-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.85; }
+  50%      { transform: translate3d(0, -28px, 0) scale(1.08); opacity: 1; }
+}
+
+/* Denyut halus untuk titik "live" / aksen status. */
+@keyframes hero-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.78); }
+}
+
+/* Bob lembut untuk maskot — naik-turun halus tanpa ubah opasitas/skala. */
+@keyframes maskot-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -16px, 0); }
+}
+
+/* Putaran sangat lambat untuk cincin dekoratif di belakang maskot. */
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-[hero-"],
+  [class*="animate-[maskot-"],
+  [class*="animate-[ring-"] { animation: none !important; }
+}
