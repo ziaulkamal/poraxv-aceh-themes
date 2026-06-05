@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "../ui/Badge";
 import type { Berita } from "../../types";
@@ -23,12 +24,12 @@ export function BeritaCard({ item }: { item: Berita }) {
           {item.judul}
         </h3>
         <p className="mt-2 flex-1 text-sm text-ink-soft">{item.ringkasan}</p>
-        <a
-          href="#"
+        <Link
+          to="/berita"
           className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-merah hover:gap-2"
         >
           Baca selengkapnya <ArrowRight className="size-4" />
-        </a>
+        </Link>
       </div>
     </article>
   );

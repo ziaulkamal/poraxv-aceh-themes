@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import { Container } from "../ui/Container";
 import { SectionHeading } from "../ui/SectionHeading";
+import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { VenueCard } from "./VenueCard";
@@ -29,6 +31,12 @@ export function Venue() {
             </Reveal>
           ))}
         </div>
+
+        <Reveal className="mt-10 flex justify-center">
+          <Link to="/venue" className={button({ variant: "outline" })}>
+            Jelajahi Semua Venue
+          </Link>
+        </Reveal>
       </Container>
     </section>
   );

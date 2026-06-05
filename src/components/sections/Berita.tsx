@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import { Container } from "../ui/Container";
 import { SectionHeading } from "../ui/SectionHeading";
-import { Button } from "../ui/Button";
+import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { BeritaCard } from "./BeritaCard";
@@ -33,7 +34,9 @@ export function Berita() {
         </div>
 
         <Reveal className="mt-10 flex justify-center">
-          <Button variant="outline">Lihat Semua Berita</Button>
+          <Link to="/berita" className={button({ variant: "outline" })}>
+            Lihat Semua Berita
+          </Link>
         </Reveal>
       </Container>
     </section>

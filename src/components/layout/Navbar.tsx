@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
-import { Menu, X, Sun, Moon, Radio, Phone } from "lucide-react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, Sun, Moon, Radio, Phone, Search } from "lucide-react";
 import { cn } from "../../lib/cn";
+import { SearchModal } from "./SearchModal";
 import logo from "../../assets/brand/logo.png";
 
-const links = [
-  { label: "Beranda", href: "#beranda" },
-  { label: "Tentang", href: "#tentang" },
-  { label: "Cabor", href: "#cabor" },
-  { label: "Jadwal", href: "#jadwal" },
-  { label: "Klasemen", href: "#klasemen" },
-  { label: "Venue", href: "#venue" },
-  { label: "Berita", href: "#berita" },
+/** Tautan yang menggulir ke section di landing (bukan rute terpisah). */
+const sectionLinks = [
+  { label: "Beranda", id: "beranda" },
+  { label: "Tentang", id: "tentang" },
+  { label: "Jadwal", id: "jadwal" },
+  { label: "Klasemen", id: "klasemen" },
+  { label: "Venue", id: "venue" },
+  { label: "Berita", id: "berita" },
+];
+
+/** Tautan ke laman terpisah. */
+const pageLinks = [
+  { label: "Galeri", to: "/galeri" },
 ];
 
 const iconBtn =
@@ -27,6 +34,19 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(false);
+  const [cariBuka, setCariBuka] = useState(false);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  /** Pergi ke section landing; bila sedang di laman lain, pulang dulu ke "/". */
+  const goSection = (id: string, after?: () => void) => {
+    after?.();
+    if (pathname !== "/") {
+      navigate("/", { state: { scrollTo: id } });
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -65,6 +85,16 @@ export function Navbar() {
     <div className={cn("flex items-center gap-1", opts?.className)}>
       <button
         type="button"
+        onClick={() => { opts?.onNavigate?.(); setCariBuka(true); }}
+        aria-label="Cari"
+        title="Cari"
+        className={iconBtn}
+      >
+        <Search className="size-5" />
+      </button>
+
+      <button
+        type="button"
         onClick={toggleTheme}
         aria-label="Ganti mode gelap/terang"
         title="Mode gelap / terang"
@@ -73,8 +103,8 @@ export function Navbar() {
         {dark ? <Sun className="size-5" /> : <Moon className="size-5" />}
       </button>
 
-      <a
-        href="#live"
+      <Link
+        to="/live"
         onClick={opts?.onNavigate}
         aria-label="Live pertandingan"
         title="Live pertandingan"
@@ -85,7 +115,7 @@ export function Navbar() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-merah opacity-75" />
           <span className="relative inline-flex size-2 rounded-full bg-merah" />
         </span>
-      </a>
+      </Link>
 
       <a
         href="#kontak"
@@ -119,27 +149,46 @@ export function Navbar() {
           )}
         >
           <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-            <a href="#beranda" className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => goSection("beranda")}
+              className="flex items-center gap-2"
+            >
               <img
                 src={logo}
                 alt="Logo PORA Aceh Jaya"
                 className="h-10 w-auto shrink-0"
               />
               <span className="font-display text-xl font-bold uppercase tracking-wide text-ink">
-                PORA <span className="text-merah">Aceh Jaya</span>
+                PORA <span className="text-merah">XV</span>
               </span>
-            </a>
+            </button>
 
             {/* Navigasi desktop */}
-            <nav className="hidden items-center gap-6 lg:flex">
-              {links.map((link) => (
-                <a
+            <nav className="hidden items-center gap-7 lg:flex xl:gap-8">
+              {sectionLinks.map((link) => (
+                <button
                   key={link.label}
-                  href={link.href}
+                  type="button"
+                  onClick={() => goSection(link.id)}
                   className="text-sm font-medium text-ink-soft transition hover:text-merah"
                 >
                   {link.label}
-                </a>
+                </button>
+              ))}
+              {pageLinks.map((link) => (
+                <NavLink
+                  key={link.label}
+                  to={link.to}
+                  className={({ isActive }) =>
+                    cn(
+                      "text-sm font-medium transition hover:text-merah",
+                      isActive ? "text-merah" : "text-ink-soft",
+                    )
+                  }
+                >
+                  {link.label}
+                </NavLink>
               ))}
             </nav>
 
@@ -177,9 +226,9 @@ export function Navbar() {
         )}
       >
         <div className="flex items-center justify-between border-b border-ink/5 px-5 py-4">
-          <a
-            href="#beranda"
-            onClick={() => setIsOpen(false)}
+          <button
+            type="button"
+            onClick={() => goSection("beranda", () => setIsOpen(false))}
             className="flex items-center gap-2"
           >
             <img
@@ -188,9 +237,9 @@ export function Navbar() {
               className="h-10 w-auto shrink-0"
             />
             <span className="font-display text-xl font-bold uppercase tracking-wide text-ink">
-              PORA <span className="text-merah">Aceh Jaya</span>
+              PORA <span className="text-merah">XV</span>
             </span>
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => setIsOpen(false)}
@@ -202,15 +251,31 @@ export function Navbar() {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
-          {links.map((link) => (
-            <a
+          {sectionLinks.map((link) => (
+            <button
               key={link.label}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="rounded-md px-3 py-3 text-base font-medium text-ink-soft transition hover:bg-surface-soft hover:text-merah"
+              type="button"
+              onClick={() => goSection(link.id, () => setIsOpen(false))}
+              className="rounded-md px-3 py-3 text-left text-base font-medium text-ink-soft transition hover:bg-surface-soft hover:text-merah"
             >
               {link.label}
-            </a>
+            </button>
+          ))}
+          <span className="mx-3 my-2 h-px bg-ink/10" />
+          {pageLinks.map((link) => (
+            <NavLink
+              key={link.label}
+              to={link.to}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                cn(
+                  "rounded-md px-3 py-3 text-base font-medium transition hover:bg-surface-soft hover:text-merah",
+                  isActive ? "text-merah" : "text-ink-soft",
+                )
+              }
+            >
+              {link.label}
+            </NavLink>
           ))}
         </nav>
 
@@ -218,6 +283,8 @@ export function Navbar() {
           {actions({ className: "justify-center gap-3", onNavigate: () => setIsOpen(false) })}
         </div>
       </aside>
+
+      <SearchModal open={cariBuka} onClose={() => setCariBuka(false)} />
     </header>
   );
 }

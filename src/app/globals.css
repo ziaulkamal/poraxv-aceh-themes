@@ -69,6 +69,15 @@ body {
   html { scroll-behavior: auto; }
 }
 
+/* Sembunyikan scrollbar tapi tetap bisa digulir (mouse-drag / sentuh). */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* === Animasi dekoratif Hero === */
 /* Glow brand mengambang lembut: pergeseran + denyut skala/opasitas. */
 @keyframes hero-float {

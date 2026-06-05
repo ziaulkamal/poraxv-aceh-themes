@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import { Container } from "../ui/Container";
 import { SectionHeading } from "../ui/SectionHeading";
+import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { klasemenList, event } from "../../data/content";
@@ -90,6 +92,12 @@ export function KlasemenMedali() {
               })}
             </tbody>
           </table>
+        </Reveal>
+
+        <Reveal className="mt-8 flex justify-center">
+          <Link to="/klasemen" className={button({ variant: "outline" })}>
+            Klasemen Lengkap
+          </Link>
         </Reveal>
       </Container>
     </section>

@@ -1,12 +1,38 @@
 import type { CSSProperties } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Mail, Phone, MapPin, Globe, Send, ArrowUpRight } from "lucide-react";
 import { Container } from "../ui/Container";
 import { event } from "../../data/content";
 import logo from "../../assets/brand/logo.png";
 
-const navKolom = [
-  { judul: "Event", items: ["Tentang PORA", "Cabang Olahraga", "Jadwal", "Klasemen"] },
-  { judul: "Informasi", items: ["Venue & Arena", "Berita", "Panduan Kontingen", "Volunteer"] },
+type NavItem = { label: string; to?: string; section?: string };
+
+const navKolom: { judul: string; items: NavItem[] }[] = [
+  {
+    judul: "Event",
+    items: [
+      { label: "Tentang PORA", section: "tentang" },
+      { label: "Cabang Olahraga", section: "cabor" },
+      { label: "Jadwal", section: "jadwal" },
+      { label: "Klasemen", to: "/klasemen" },
+    ],
+  },
+  {
+    judul: "Informasi",
+    items: [
+      { label: "Venue & Arena", to: "/venue" },
+      { label: "Berita", to: "/berita" },
+      { label: "Live Skor", to: "/live" },
+      { label: "Galeri", to: "/galeri" },
+    ],
+  },
+];
+
+const legalLinks = [
+  { label: "Kontak", to: "/kontak" },
+  { label: "Syarat & Ketentuan", to: "/syarat-ketentuan" },
+  { label: "Kebijakan Cookie", to: "/kebijakan-cookie" },
+  { label: "Peta Situs", to: "/sitemap" },
 ];
 
 const kontak = [
@@ -19,6 +45,15 @@ const sosial = [Globe, Send, Mail];
 
 /** Footer: identitas event, navigasi ringkas, kontak panitia, dan kanal sosial. */
 export function Footer() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  /** Gulir ke section landing; bila di laman lain, pulang dulu ke "/". */
+  const goSection = (id: string) => {
+    if (pathname !== "/") navigate("/", { state: { scrollTo: id } });
+    else document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <footer
       id="footer"
@@ -72,17 +107,26 @@ export function Footer() {
               {kolom.judul}
             </h4>
             <ul className="mt-7 space-y-3 text-sm text-surface/55">
-              {kolom.items.map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="group inline-flex items-center gap-2 transition-colors hover:text-surface"
-                  >
+              {kolom.items.map((item) => {
+                const inner = (
+                  <>
                     <span className="h-px w-0 bg-emas transition-all duration-300 group-hover:w-4" />
-                    {item}
-                  </a>
-                </li>
-              ))}
+                    {item.label}
+                  </>
+                );
+                const cls = "group inline-flex items-center gap-2 text-left transition-colors hover:text-surface";
+                return (
+                  <li key={item.label}>
+                    {item.to ? (
+                      <Link to={item.to} className={cls}>{inner}</Link>
+                    ) : (
+                      <button type="button" onClick={() => goSection(item.section!)} className={cls}>
+                        {inner}
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
@@ -131,12 +175,21 @@ export function Footer() {
       </Container>
 
       <div className="relative border-t border-surface/10">
-        <Container className="flex flex-col items-center justify-between gap-3 py-6 text-xs text-surface/45 sm:flex-row">
-          <p>© 2026 Panitia Besar {event.edisi} — {event.tuanRumah}.</p>
-          <p className="inline-flex items-center gap-1.5">
-            Dibuat untuk semangat sportivitas Aceh
-            <ArrowUpRight className="size-3.5 text-emas/70" />
-          </p>
+        <Container className="flex flex-col items-center gap-4 py-6 text-xs text-surface/45">
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {legalLinks.map((l) => (
+              <Link key={l.to} to={l.to} className="transition-colors hover:text-surface">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex w-full flex-col items-center justify-between gap-3 border-t border-surface/10 pt-4 sm:flex-row">
+            <p>© 2026 Panitia Besar {event.edisi} — {event.tuanRumah}.</p>
+            <p className="inline-flex items-center gap-1.5">
+              Dibuat untuk semangat sportivitas Aceh
+              <ArrowUpRight className="size-3.5 text-emas/70" />
+            </p>
+          </div>
         </Container>
       </div>
     </footer>
