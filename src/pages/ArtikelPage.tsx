@@ -4,14 +4,23 @@ import { Container } from "../components/ui/Container";
 import { Badge } from "../components/ui/Badge";
 import { ArtikelCard } from "../components/sections/ArtikelCard";
 import { KomentarSection } from "../components/sections/KomentarSection";
-import { artikelList } from "../data/pages";
+import { useArtikel, useArtikelCards } from "../lib/api/hooks";
 
 /** Laman detail satu artikel berita, lengkap dgn meta & artikel terkait. */
 export function ArtikelPage() {
   const { slug } = useParams();
-  const artikel = artikelList.find((a) => a.slug === slug);
+  const { data: live, isLoading } = useArtikel(slug ?? "");
+  const semua = useArtikelCards();
+  const artikel = live ?? semua.find((a) => a.slug === slug);
 
   if (!artikel) {
+    if (isLoading) {
+      return (
+        <Container className="py-40 text-center">
+          <p className="text-ink-muted">Memuat artikel…</p>
+        </Container>
+      );
+    }
     return (
       <Container className="py-40 text-center">
         <h1 className="font-display text-2xl font-bold text-ink">Artikel tidak ditemukan</h1>
@@ -22,7 +31,7 @@ export function ArtikelPage() {
     );
   }
 
-  const terkait = artikelList.filter((a) => a.slug !== artikel.slug).slice(0, 3);
+  const terkait = semua.filter((a) => a.slug !== artikel.slug).slice(0, 3);
 
   return (
     <article className="bg-surface dark:bg-page-bg">

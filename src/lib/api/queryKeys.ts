@@ -5,6 +5,7 @@ export const qk = {
   settings: ["settings"] as const,
   page: (slug: string) => ["page", slug] as const,
   berita: (params?: Record<string, unknown>) => ["berita", params ?? {}] as const,
+  artikelList: (params?: Record<string, unknown>) => ["artikel-list", params ?? {}] as const,
   artikel: (slug: string) => ["artikel", slug] as const,
   komentar: (slug: string) => ["komentar", slug] as const,
   cabor: ["cabor"] as const,

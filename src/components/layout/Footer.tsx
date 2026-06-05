@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Mail, Phone, MapPin, Globe, Send, ArrowUpRight } from "lucide-react";
 import { Container } from "../ui/Container";
-import { event } from "../../data/content";
+import { useEventInfo } from "../../lib/api/hooks";
 import logo from "../../assets/brand/logo.png";
 
 type NavItem = { label: string; to?: string; section?: string };
@@ -45,6 +45,7 @@ const sosial = [Globe, Send, Mail];
 
 /** Footer: identitas event, navigasi ringkas, kontak panitia, dan kanal sosial. */
 export function Footer() {
+  const event = useEventInfo();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 

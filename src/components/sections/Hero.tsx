@@ -5,12 +5,14 @@ import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { Reveal } from "../ui/Reveal";
 import { CountdownTimer } from "../ui/CountdownTimer";
-import { event, caborList, venueList } from "../../data/content";
+import { caborList, venueList } from "../../data/content";
 import { kontingenList } from "../../data/kontingen";
+import { useEventInfo } from "../../lib/api/hooks";
+import type { EventInfo } from "../../types";
 import maskot from "../../assets/brand/maskot.png";
 
 /** Format rentang tanggal event jadi "12 – 22 September 2026". */
-function rentangTanggal(): string {
+function rentangTanggal(event: EventInfo): string {
   const mulai = new Date(event.tanggalMulai);
   const selesai = new Date(event.tanggalSelesai);
   const bulan = selesai.toLocaleDateString("id-ID", { month: "long" });
@@ -26,6 +28,7 @@ const stats = [
 
 /** Hero pembuka: identitas event, hitung mundur, dan CTA di atas latar gelap. */
 export function Hero() {
+  const event = useEventInfo();
   return (
     <section
       id="beranda"
@@ -102,7 +105,7 @@ export function Hero() {
 
           <div className="mt-6 flex flex-wrap items-center gap-2.5 text-sm text-surface/85">
             <span className="inline-flex items-center gap-2 rounded-pill bg-surface/5 px-3.5 py-1.5 ring-1 ring-surface/10">
-              <CalendarDays className="size-4 text-emas" /> {rentangTanggal()}
+              <CalendarDays className="size-4 text-emas" /> {rentangTanggal(event)}
             </span>
             <span className="inline-flex items-center gap-2 rounded-pill bg-surface/5 px-3.5 py-1.5 ring-1 ring-surface/10">
               <MapPin className="size-4 text-merah" /> {event.kota}, Aceh Jaya

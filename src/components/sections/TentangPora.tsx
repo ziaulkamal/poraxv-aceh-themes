@@ -5,7 +5,8 @@ import { SectionHeading } from "../ui/SectionHeading";
 import { IconBox } from "../ui/IconBox";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
-import { caborList, klasemenList, venueList, socials } from "../../data/content";
+import { caborList, klasemenList, venueList } from "../../data/content";
+import { useSocialLinks } from "../../lib/api/hooks";
 
 /** Angka ringkas dirakit dari data agar selalu konsisten dengan konten. */
 const statistik = [
@@ -21,6 +22,7 @@ const statistik = [
  * dan section Cabang Olahraga (putih) di bawah.
  */
 export function TentangPora() {
+  const socials = useSocialLinks();
   return (
     <section
       id="tentang"

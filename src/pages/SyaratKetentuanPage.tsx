@@ -1,5 +1,7 @@
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
+import { BlokKonten } from "../components/ui/BlokKonten";
+import { usePage } from "../lib/api/hooks";
 
 const pasal = [
   {
@@ -38,6 +40,7 @@ const pasal = [
 
 /** Laman Syarat & Ketentuan layanan. */
 export function SyaratKetentuanPage() {
+  const { data: blok } = usePage("syarat-ketentuan");
   return (
     <>
       <PageHeader
@@ -51,16 +54,22 @@ export function SyaratKetentuanPage() {
         <Container>
           <div className="mx-auto max-w-3xl">
             <p className="text-sm text-ink-muted">Terakhir diperbarui: 1 September 2026</p>
-            <div className="mt-8 space-y-8">
-              {pasal.map((p) => (
-                <div key={p.judul}>
-                  <h2 className="font-display text-lg font-bold text-ink sm:text-xl">{p.judul}</h2>
-                  {p.isi.map((teks, i) => (
-                    <p key={i} className="mt-2 text-sm leading-relaxed text-ink-soft">{teks}</p>
-                  ))}
-                </div>
-              ))}
-            </div>
+            {blok && blok.length > 0 ? (
+              <div className="mt-8">
+                <BlokKonten blocks={blok} />
+              </div>
+            ) : (
+              <div className="mt-8 space-y-8">
+                {pasal.map((p) => (
+                  <div key={p.judul}>
+                    <h2 className="font-display text-lg font-bold text-ink sm:text-xl">{p.judul}</h2>
+                    {p.isi.map((teks, i) => (
+                      <p key={i} className="mt-2 text-sm leading-relaxed text-ink-soft">{teks}</p>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </Container>
       </section>

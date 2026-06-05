@@ -72,6 +72,16 @@ export function useBerita(params?: Record<string, unknown>): UseQueryResult<Beri
   });
 }
 
+/** Daftar artikel (kartu) untuk laman berita — body kosong, dipakai untuk grid. */
+export function useArtikelList(params?: Record<string, unknown>): UseQueryResult<Artikel[]> {
+  return useQuery({
+    queryKey: qk.artikelList(params),
+    staleTime: STALE.konten,
+    queryFn: async () =>
+      (await cmsList<RawArticle>("/articles", { status: "published", ...params })).map(toArtikel),
+  });
+}
+
 /** Satu artikel lengkap by slug. */
 export function useArtikel(slug: string): UseQueryResult<Artikel> {
   return useQuery({

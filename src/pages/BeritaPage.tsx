@@ -4,13 +4,14 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Reveal } from "../components/ui/Reveal";
 import { ArtikelCard } from "../components/sections/ArtikelCard";
 import { cn } from "../lib/cn";
-import { artikelList } from "../data/pages";
+import { useArtikelCards } from "../lib/api/hooks";
 
 /** Laman daftar berita: filter kategori + grid artikel menuju laman detail. */
 export function BeritaPage() {
+  const artikelList = useArtikelCards();
   const kategoriList = useMemo(
     () => ["Semua", ...Array.from(new Set(artikelList.map((a) => a.kategori)))],
-    [],
+    [artikelList],
   );
   const [aktif, setAktif] = useState("Semua");
 

@@ -5,10 +5,11 @@ import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { BeritaCard } from "./BeritaCard";
-import { beritaList } from "../../data/content";
+import { useBeritaCards } from "../../lib/api/hooks";
 
 /** Section berita: kabar terbaru seputar event dalam grid responsif tiga kolom. */
 export function Berita() {
+  const beritaList = useBeritaCards(3);
   return (
     <section
       id="berita"
