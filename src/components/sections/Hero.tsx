@@ -7,6 +7,7 @@ import { Reveal } from "../ui/Reveal";
 import { CountdownTimer } from "../ui/CountdownTimer";
 import { event, caborList, venueList } from "../../data/content";
 import { kontingenList } from "../../data/kontingen";
+import maskot from "../../assets/brand/maskot.png";
 
 /** Format rentang tanggal event jadi "12 – 22 September 2026". */
 function rentangTanggal(): string {
@@ -145,7 +146,7 @@ export function Hero() {
 
             {/* Maskot — fokus visual hero, mengambang lembut. */}
             <img
-              src="/images/maskot.png"
+              src={maskot}
               alt="Maskot harimau PORA Aceh Jaya membawa obor"
               loading="eager"
               className="relative z-10 mx-auto w-[min(78vw,24rem)] animate-[maskot-float_6s_ease-in-out_infinite] drop-shadow-[0_34px_55px_rgba(0,0,0,0.55)]"

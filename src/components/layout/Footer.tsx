@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Mail, Phone, MapPin, Globe, Send, ArrowUpRight } from "lucide-react";
 import { Container } from "../ui/Container";
 import { event } from "../../data/content";
+import logo from "../../assets/brand/logo.png";
 
 const navKolom = [
   { judul: "Event", items: ["Tentang PORA", "Cabang Olahraga", "Jadwal", "Klasemen"] },
@@ -45,7 +46,7 @@ export function Footer() {
         <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-3">
             <img
-              src="/images/logo.png"
+              src={logo}
               alt="Logo PORA Aceh Jaya"
               className="h-12 w-auto shrink-0"
             />

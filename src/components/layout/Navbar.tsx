@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X, Sun, Moon, Radio, Phone } from "lucide-react";
 import { cn } from "../../lib/cn";
+import logo from "../../assets/brand/logo.png";
 
 const links = [
   { label: "Beranda", href: "#beranda" },
@@ -119,7 +120,7 @@ export function Navbar() {
           <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
             <a href="#beranda" className="flex items-center gap-2">
               <img
-                src="/images/logo.png"
+                src={logo}
                 alt="Logo PORA Aceh Jaya"
                 className="h-10 w-auto shrink-0"
               />
@@ -181,7 +182,7 @@ export function Navbar() {
             className="flex items-center gap-2"
           >
             <img
-              src="/images/logo.png"
+              src={logo}
               alt="Logo PORA Aceh Jaya"
               className="h-10 w-auto shrink-0"
             />
