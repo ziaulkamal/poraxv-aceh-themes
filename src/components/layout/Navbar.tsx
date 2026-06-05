@@ -42,11 +42,10 @@ export function Navbar() {
     };
   }, [isOpen]);
 
-  // Inisialisasi mode gelap/terang dari localStorage atau preferensi sistem.
+  // Inisialisasi mode gelap/terang: ikuti pilihan tersimpan, default ke GELAP.
   useEffect(() => {
     const stored = localStorage.getItem("theme");
-    const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = stored ? stored === "dark" : prefers;
+    const isDark = stored ? stored === "dark" : true;
     setDark(isDark);
     document.documentElement.classList.toggle("dark", isDark);
   }, []);

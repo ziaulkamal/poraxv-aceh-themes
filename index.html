@@ -14,6 +14,19 @@
     />
 
     <title>PORA — Pekan Olahraga Aceh | Tuan Rumah Aceh Jaya</title>
+
+    <!-- Terapkan tema sedini mungkin (default GELAP) agar tak ada kedip terang. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var isDark = stored ? stored === "dark" : true;
+          document.documentElement.classList.toggle("dark", isDark);
+        } catch (e) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
