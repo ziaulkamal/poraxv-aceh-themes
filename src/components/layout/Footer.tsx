@@ -40,9 +40,9 @@ export function Footer() {
         className="pointer-events-none absolute -bottom-32 right-0 h-72 w-80 rounded-full bg-emas/10 blur-[120px]"
       />
 
-      <Container className="relative grid gap-12 py-16 md:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
+      <Container className="relative grid grid-cols-2 gap-x-8 gap-y-10 py-14 md:grid-cols-[1.5fr_1fr_1fr_1.3fr] md:gap-12 md:py-16">
         {/* Identitas */}
-        <div>
+        <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-3">
             <img
               src="/images/logo.png"
@@ -86,7 +86,7 @@ export function Footer() {
         ))}
 
         {/* Kontak */}
-        <div>
+        <div className="col-span-2 md:col-span-1">
           <h4 className="relative inline-block font-display text-sm font-semibold uppercase tracking-widest text-surface after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-7 after:rounded-full after:bg-emas">
             Sekretariat Panitia
           </h4>
