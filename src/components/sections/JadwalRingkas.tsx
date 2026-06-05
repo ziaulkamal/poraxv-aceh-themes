@@ -5,10 +5,11 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
-import { jadwalList } from "../../data/content";
+import { useJadwalRingkas } from "../../lib/api/hooks";
 
 /** Section cuplikan jadwal: daftar agenda terdekat, stack di mobile & sebaris di sm ke atas. */
 export function JadwalRingkas() {
+  const jadwalList = useJadwalRingkas(6);
   return (
     <section
       id="jadwal"

@@ -5,10 +5,11 @@ import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { VenueCard } from "./VenueCard";
-import { venueList } from "../../data/content";
+import { useVenueList } from "../../lib/api/hooks";
 
 /** Section venue: galeri arena pertandingan di Aceh Jaya dalam grid auto-fit. */
 export function Venue() {
+  const venueList = useVenueList();
   return (
     <section
       id="venue"

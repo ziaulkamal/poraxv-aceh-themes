@@ -6,7 +6,7 @@ import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { Button } from "../ui/Button";
 import { CaborCard } from "./CaborCard";
-import { caborList } from "../../data/content";
+import { useCaborList } from "../../lib/api/hooks";
 
 /** Berapa kartu yang tampil sebelum tombol "Lihat semua" ditekan. */
 const PREVIEW = 8;
@@ -14,6 +14,7 @@ const PREVIEW = 8;
 /** Section daftar cabang olahraga: pratinjau ringkas + expand agar tak menutupi konten penting di bawahnya. */
 export function CabangOlahraga() {
   const [expanded, setExpanded] = useState(false);
+  const caborList = useCaborList();
 
   const totalCabor = caborList.length;
   const totalNomor = caborList.reduce((acc, c) => acc + c.jumlahNomor, 0);

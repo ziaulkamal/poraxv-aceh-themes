@@ -5,16 +5,7 @@ import { SectionHeading } from "../ui/SectionHeading";
 import { IconBox } from "../ui/IconBox";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
-import { caborList, klasemenList, venueList } from "../../data/content";
-import { useSocialLinks } from "../../lib/api/hooks";
-
-/** Angka ringkas dirakit dari data agar selalu konsisten dengan konten. */
-const statistik = [
-  { icon: Trophy, value: `${caborList.length}`, label: "Cabang Olahraga", tone: "merah" as const, glow: "bg-merah/25" },
-  { icon: Users, value: `${klasemenList.length}+`, label: "Kontingen Kab/Kota", tone: "hijau" as const, glow: "bg-hijau/30" },
-  { icon: MapPin, value: `${venueList.length}`, label: "Venue Pertandingan", tone: "emas" as const, glow: "bg-emas/30" },
-  { icon: Flame, value: "2.500+", label: "Atlet Bertanding", tone: "ink" as const, glow: "bg-ink/15" },
-];
+import { useCaborList, useKlasemenList, useSocialLinks, useVenueList } from "../../lib/api/hooks";
 
 /**
  * Section Tentang: ringkas makna event + profil tuan rumah + statistik kunci.
@@ -23,6 +14,15 @@ const statistik = [
  */
 export function TentangPora() {
   const socials = useSocialLinks();
+  const caborList = useCaborList();
+  const venueList = useVenueList();
+  const klasemenList = useKlasemenList();
+  const statistik = [
+    { icon: Trophy, value: `${caborList.length}`, label: "Cabang Olahraga", tone: "merah" as const, glow: "bg-merah/25" },
+    { icon: Users, value: `${klasemenList.length}+`, label: "Kontingen Kab/Kota", tone: "hijau" as const, glow: "bg-hijau/30" },
+    { icon: MapPin, value: `${venueList.length}`, label: "Venue Pertandingan", tone: "emas" as const, glow: "bg-emas/30" },
+    { icon: Flame, value: "2.500+", label: "Atlet Bertanding", tone: "ink" as const, glow: "bg-ink/15" },
+  ];
   return (
     <section
       id="tentang"

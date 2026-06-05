@@ -13,12 +13,18 @@ export function CaborCard({ item }: { item: Cabor }) {
       {/* Tile ikon: latar putih (ikon punya background putih, bukan transparan)
           agar menyatu mulus jadi thumbnail berbingkai rapi di kedua tema. */}
       <span className="inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-ink/10 transition group-hover:ring-merah/40">
-        <img
-          src={item.iconSrc}
-          alt={`Ikon ${item.nama}`}
-          loading="lazy"
-          className="size-full object-contain p-1 transition duration-300 group-hover:scale-105"
-        />
+        {item.iconSrc ? (
+          <img
+            src={item.iconSrc}
+            alt={`Ikon ${item.nama}`}
+            loading="lazy"
+            className="size-full object-contain p-1 transition duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <span className="font-display text-xl font-bold text-merah">
+            {item.nama.charAt(0)}
+          </span>
+        )}
       </span>
 
       <div className="min-w-0">

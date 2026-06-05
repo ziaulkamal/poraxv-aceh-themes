@@ -3,7 +3,7 @@ import { Search, Medal, ArrowUpDown } from "lucide-react";
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
 import { cn } from "../lib/cn";
-import { klasemenList, event } from "../data/content";
+import { useEventInfo, useKlasemenList } from "../lib/api/hooks";
 
 type SortKey = "peringkat" | "emas" | "perak" | "perunggu" | "total";
 
@@ -13,10 +13,11 @@ const kolom = [
   { key: "perunggu" as const, label: "Perunggu", dot: "bg-perunggu" },
 ];
 
-const host = event.tuanRumah.split(" ").pop() ?? "";
-
 /** Laman klasemen lengkap: podium tiga besar + tabel medali sortir & cari. */
 export function KlasemenPage() {
+  const klasemenList = useKlasemenList();
+  const event = useEventInfo();
+  const host = event.tuanRumah.split(" ").pop() ?? "";
   const [cari, setCari] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("peringkat");
   const [asc, setAsc] = useState(true);
@@ -30,7 +31,7 @@ export function KlasemenPage() {
       const d = a[sortKey] - b[sortKey];
       return asc ? d : -d;
     });
-  }, [cari, sortKey, asc]);
+  }, [cari, sortKey, asc, klasemenList]);
 
   const podium = useMemo(
     () =>
@@ -38,7 +39,7 @@ export function KlasemenPage() {
         .map((r) => ({ ...r, total: r.emas + r.perak + r.perunggu }))
         .sort((a, b) => a.peringkat - b.peringkat)
         .slice(0, 3),
-    [],
+    [klasemenList],
   );
 
   const toggleSort = (key: SortKey) => {

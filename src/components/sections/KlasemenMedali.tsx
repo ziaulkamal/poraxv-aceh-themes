@@ -4,7 +4,7 @@ import { SectionHeading } from "../ui/SectionHeading";
 import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
-import { klasemenList, event } from "../../data/content";
+import { useEventInfo, useKlasemenList } from "../../lib/api/hooks";
 import { cn } from "../../lib/cn";
 
 /** Kepala kolom medali dengan titik warna emas/perak/perunggu. */
@@ -16,6 +16,8 @@ const kolomMedali = [
 
 /** Section klasemen: tabel perolehan medali per kontingen; baris tuan rumah disorot. */
 export function KlasemenMedali() {
+  const klasemenList = useKlasemenList();
+  const event = useEventInfo();
   return (
     <section
       id="klasemen"

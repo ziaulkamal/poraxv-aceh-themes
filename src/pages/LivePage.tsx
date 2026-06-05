@@ -5,7 +5,8 @@ import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
 import { LiveStreaming } from "../components/sections/LiveStreaming";
 import { cn } from "../lib/cn";
-import { pertandinganList, type Pertandingan } from "../data/pages";
+import type { Pertandingan } from "../data/pages";
+import { useLiveSkorList } from "../lib/api/hooks";
 import { kontingenList } from "../data/kontingen";
 
 const logoFor = (nama: string) => kontingenList.find((k) => k.nama === nama)?.logo;
@@ -130,6 +131,7 @@ export function LivePage() {
   const [status, setStatus] = useState<(typeof statusFilter)[number]["key"]>("semua");
   const [jenis, setJenis] = useState<(typeof jenisFilter)[number]["key"]>("semua");
   const autoOpenStream = (useLocation().state as { openStream?: string } | null)?.openStream;
+  const pertandinganList = useLiveSkorList();
 
   const tersaring = useMemo(
     () =>
@@ -138,7 +140,7 @@ export function LivePage() {
           (status === "semua" || m.status === status) &&
           (jenis === "semua" || m.jenis === jenis),
       ),
-    [status, jenis],
+    [status, jenis, pertandinganList],
   );
 
   const sorotan = tersaring.find((m) => m.status === "live");

@@ -4,11 +4,12 @@ import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { cn } from "../lib/cn";
-import { venueList } from "../data/content";
+import { useVenueList } from "../lib/api/hooks";
 import { venueDetail } from "../data/pages";
 
 /** Laman venue: viewer besar yang bisa dikontrol — geser, autoplay, thumbnail. */
 export function VenuePage() {
+  const venueList = useVenueList();
   const [aktif, setAktif] = useState(0);
   const [main, setMain] = useState(true); // autoplay
 
