@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+  type SyntheticEvent as ReactSyntheticEvent,
+} from "react";
 import { Eye, VideoOff, ExternalLink, Play, X, Radio } from "lucide-react";
 import { cn } from "../../lib/cn";
 import type { LiveChannel } from "../../data/pages";
@@ -15,6 +21,14 @@ function YoutubeGlyph({ className }: { className?: string }) {
 
 const thumbnail = (id: string) => `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 
+/** maxresdefault sering 404 → jatuh ke hqdefault (sekali, agar tak loop). */
+function onThumbError(e: ReactSyntheticEvent<HTMLImageElement>, youtubeId: string) {
+  const img = e.currentTarget;
+  if (img.dataset.fallback) return;
+  img.dataset.fallback = "1";
+  img.src = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+}
+
 /** Lencana LIVE merah berdenyut. */
 function LiveBadge() {
   return (
@@ -25,7 +39,7 @@ function LiveBadge() {
 }
 
 /** Popup pemutar multi-saluran: embed autoplay + pengalih antar siaran. */
-function StreamModal({
+export function StreamModal({
   channels,
   awal,
   onClose,
@@ -47,21 +61,24 @@ function StreamModal({
     };
   }, [onClose]);
 
+  // Kanal bisa hilang saat siaran dimatikan panitia ketika modal terbuka.
+  if (!ch) return null;
+
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/90 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-ink/90 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <button
         type="button"
         onClick={onClose}
         aria-label="Tutup"
-        className="absolute right-4 top-4 inline-flex size-10 items-center justify-center rounded-full bg-surface/10 text-surface transition hover:bg-surface/20"
+        className="fixed right-4 top-4 z-10 inline-flex size-10 items-center justify-center rounded-full bg-surface/10 text-surface transition hover:bg-surface/20"
       >
         <X className="size-5" />
       </button>
 
-      <div className="w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+      <div className="my-auto w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-2 pb-3 text-surface">
           <LiveBadge />
           <p className="truncate text-sm font-semibold">
@@ -93,7 +110,12 @@ function StreamModal({
                   i === aktif ? "ring-[#FF0000]" : "ring-transparent opacity-60 hover:opacity-100",
                 )}
               >
-                <img src={thumbnail(c.youtubeId)} alt={c.cabor} className="h-full w-full object-cover" />
+                <img
+                  src={thumbnail(c.youtubeId)}
+                  alt={c.cabor}
+                  onError={(e) => onThumbError(e, c.youtubeId)}
+                  className="h-full w-full object-cover"
+                />
                 <span className="absolute inset-x-0 bottom-0 truncate bg-ink/70 px-1.5 py-0.5 text-[0.6rem] font-semibold text-surface">
                   {c.cabor}
                 </span>
@@ -118,8 +140,18 @@ function StreamModal({
  * Hub siaran langsung: beberapa cabang tayang bersamaan sebagai grid kartu.
  * Tentatif — hanya tampil saat Panitia Besar mengaktifkan mode streaming.
  */
-export function LiveStreaming({ autoOpenId }: { autoOpenId?: string }) {
-  const { enabled: streamingAktif, channels: liveChannels } = useStreamingState();
+export function LiveStreaming({
+  autoOpenId,
+  hideIds,
+}: {
+  autoOpenId?: string;
+  hideIds?: string[];
+}) {
+  const { enabled: streamingAktif, channels: allChannels } = useStreamingState();
+  // Sembunyikan kanal yang sudah tampil di blok Sorotan (hindari duplikasi).
+  const liveChannels = hideIds?.length
+    ? allChannels.filter((c) => !hideIds.includes(c.id))
+    : allChannels;
   const [buka, setBuka] = useState<number | null>(null);
   // Lebih dari 4 saluran: gulir mendatar agar tidak menumpuk ke bawah.
   const scroll = liveChannels.length > 4;
@@ -213,6 +245,7 @@ export function LiveStreaming({ autoOpenId }: { autoOpenId?: string }) {
                 alt={c.judul}
                 loading="lazy"
                 draggable={false}
+                onError={(e) => onThumbError(e, c.youtubeId)}
                 className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
             </div>

@@ -62,23 +62,21 @@ export function usePage(slug: string): UseQueryResult<RawContentBlock[]> {
   });
 }
 
-/** Daftar berita (artikel published) → kartu Berita. */
+/** Daftar berita → kartu Berita (endpoint publik sudah scoped PUBLISHED). */
 export function useBerita(params?: Record<string, unknown>): UseQueryResult<Berita[]> {
   return useQuery({
     queryKey: qk.berita(params),
     staleTime: STALE.konten,
-    queryFn: async () =>
-      (await cmsList<RawArticle>("/articles", { status: "published", ...params })).map(toBerita),
+    queryFn: async () => (await cmsList<RawArticle>("/articles", params)).map(toBerita),
   });
 }
 
-/** Daftar artikel (kartu) untuk laman berita — body kosong, dipakai untuk grid. */
+/** Daftar artikel (kartu) untuk laman berita (endpoint publik sudah scoped PUBLISHED). */
 export function useArtikelList(params?: Record<string, unknown>): UseQueryResult<Artikel[]> {
   return useQuery({
     queryKey: qk.artikelList(params),
     staleTime: STALE.konten,
-    queryFn: async () =>
-      (await cmsList<RawArticle>("/articles", { status: "published", ...params })).map(toArtikel),
+    queryFn: async () => (await cmsList<RawArticle>("/articles", params)).map(toArtikel),
   });
 }
 
@@ -122,6 +120,15 @@ export function useStreaming(): UseQueryResult<StreamingState> {
       enabled: !!res.streaming_enabled,
       channels: (res.channels ?? []).map(toLiveChannel),
     }),
+  });
+}
+
+/** Semua enrichment venue (deskripsi + gambar) untuk dipetakan by venueRef. */
+export function useVenueContents(): UseQueryResult<RawVenueContent[]> {
+  return useQuery({
+    queryKey: qk.venueContents,
+    staleTime: STALE.konten,
+    queryFn: () => cmsList<RawVenueContent>("/venue-content"),
   });
 }
 

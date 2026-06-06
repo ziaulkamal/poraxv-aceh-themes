@@ -185,6 +185,8 @@ export interface LiveChannel {
   judul: string;
   venue: string;
   penonton: string;
+  matchRef?: string; // id pertandingan simpora; tombol "Tonton Live" di kartu laga
+  sorotan?: boolean; // laga sorotan (maks 2) — tampil menonjol di halaman live
 }
 
 export const liveChannels: LiveChannel[] = [
@@ -259,6 +261,7 @@ export const liveChannels: LiveChannel[] = [
 export interface Peserta {
   nama: string;
   kontingen: string;
+  logo?: string; // lambang kontingen (dari wilayah_kode); FE tampilkan ikon, bukan nama
 }
 
 export interface Pertandingan {
@@ -276,6 +279,8 @@ export interface Pertandingan {
   skorB: number;
   /** Khusus tunggal: rincian skor tiap set/game [a, b]. */
   set?: [number, number][];
+  /** Semua peserta. >2 = basis multi-kontingen (ikon saja, nilai disembunyikan). */
+  peserta?: Peserta[];
 }
 
 export const pertandinganList: Pertandingan[] = [

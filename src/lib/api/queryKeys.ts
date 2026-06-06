@@ -10,6 +10,7 @@ export const qk = {
   komentar: (slug: string) => ["komentar", slug] as const,
   cabor: ["cabor"] as const,
   venue: ["venue"] as const,
+  venueContents: ["venue-contents"] as const,
   venueContent: (ref: string) => ["venue-content", ref] as const,
   jadwal: (params?: Record<string, unknown>) => ["jadwal", params ?? {}] as const,
   klasemen: ["leaderboard"] as const,

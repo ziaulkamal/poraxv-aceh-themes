@@ -6,12 +6,16 @@ import type { Venue } from "../../types";
 export function VenueCard({ item }: { item: Venue }) {
   return (
     <article className="group relative min-h-[260px] overflow-hidden rounded-lg shadow-card dark:ring-1 dark:ring-white/10">
-      <img
-        src={item.image}
-        alt={item.nama}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-      />
+      {item.image ? (
+        <img
+          src={item.image}
+          alt={item.nama}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-surface-dark" />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 p-5 text-surface">

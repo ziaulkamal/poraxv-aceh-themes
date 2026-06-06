@@ -5,6 +5,7 @@ import { Home } from "./pages/Home";
 import { BeritaPage } from "./pages/BeritaPage";
 import { ArtikelPage } from "./pages/ArtikelPage";
 import { KlasemenPage } from "./pages/KlasemenPage";
+import { JadwalPage } from "./pages/JadwalPage";
 import { LivePage } from "./pages/LivePage";
 import { VenuePage } from "./pages/VenuePage";
 import { GaleriPage } from "./pages/GaleriPage";
@@ -23,6 +24,7 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="berita" element={<BeritaPage />} />
             <Route path="berita/:slug" element={<ArtikelPage />} />
+            <Route path="jadwal" element={<JadwalPage />} />
             <Route path="klasemen" element={<KlasemenPage />} />
             <Route path="live" element={<LivePage />} />
             <Route path="venue" element={<VenuePage />} />

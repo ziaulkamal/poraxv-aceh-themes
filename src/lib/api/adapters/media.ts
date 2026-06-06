@@ -9,10 +9,12 @@ import type {
   RawArticle,
   RawComment,
   RawContentBlock,
+  RawContentBody,
   RawGalleryPhoto,
   RawLiveStream,
   RawPage,
   RawSettingsMap,
+  RawTiptapDoc,
 } from "../types";
 
 const str = (v: unknown): string => (v == null ? "" : String(v));
@@ -44,8 +46,37 @@ export function settingsToSocialHref(map: RawSettingsMap, platform: keyof typeof
   return str(map[SOCIAL_KEYS[platform]]);
 }
 
-/** Normalkan `body` (array blok ATAU string) → daftar blok FE. */
-function normalizeBlocks(body: RawContentBlock[] | string | null | undefined): RawContentBlock[] {
+/** Node TipTap → tipe blok FE (selaras dgn cms-media `toContentBlocks`). */
+const TIPTAP_TIPE: Record<string, RawContentBlock["tipe"]> = {
+  paragraph: "paragraf",
+  heading: "subjudul",
+  blockquote: "kutipan",
+};
+
+/** Rangkai teks dari leaf node TipTap secara rekursif. */
+function extractTeks(node: unknown): string {
+  if (!node || typeof node !== "object") return "";
+  const n = node as { text?: unknown; content?: unknown };
+  if (typeof n.text === "string") return n.text;
+  if (Array.isArray(n.content)) return n.content.map(extractTeks).join("");
+  return "";
+}
+
+/** Dokumen TipTap (`{ content:[...] }`) → blok FE; abaikan node tak terdukung. */
+function tiptapToBlocks(doc: RawTiptapDoc): RawContentBlock[] {
+  const out: RawContentBlock[] = [];
+  for (const node of doc.content ?? []) {
+    if (!node || typeof node !== "object") continue;
+    const tipe = TIPTAP_TIPE[String((node as { type?: unknown }).type)];
+    if (!tipe) continue;
+    const teks = extractTeks(node).trim();
+    if (teks) out.push({ tipe, teks });
+  }
+  return out;
+}
+
+/** Normalkan `body` (blok FE jadi | string | dokumen TipTap) → daftar blok FE. */
+function normalizeBlocks(body: RawContentBody | undefined): RawContentBlock[] {
   if (Array.isArray(body)) {
     return body.filter((b) => b && typeof b.teks === "string");
   }
@@ -55,7 +86,15 @@ function normalizeBlocks(body: RawContentBlock[] | string | null | undefined): R
       .map((teks) => ({ tipe: "paragraf" as const, teks: teks.trim() }))
       .filter((b) => b.teks);
   }
+  if (body && typeof body === "object" && Array.isArray(body.content)) {
+    return tiptapToBlocks(body);
+  }
   return [];
+}
+
+/** Pilih blok isi: utamakan `blocks` backend, jatuh ke normalisasi `body`. */
+function pilihBlocks(blocks: RawContentBlock[] | undefined, body: RawContentBody | undefined): RawContentBlock[] {
+  return blocks && blocks.length > 0 ? blocks : normalizeBlocks(body);
 }
 
 /** Estimasi durasi baca dari blok isi (200 kata/menit, minimal 1). */
@@ -67,6 +106,7 @@ function hitungDurasiBaca(blocks: RawContentBlock[]): string {
 /** Artikel cms → kartu Berita. */
 export function toBerita(raw: RawArticle): Berita {
   return {
+    slug: raw.slug,
     judul: raw.title,
     ringkasan: raw.excerpt ?? "",
     kategori: raw.category?.name ?? "",
@@ -77,7 +117,7 @@ export function toBerita(raw: RawArticle): Berita {
 
 /** Artikel cms → Artikel lengkap (isi blok + durasi baca terhitung). */
 export function toArtikel(raw: RawArticle): Artikel {
-  const isi = normalizeBlocks(raw.body);
+  const isi = pilihBlocks(raw.blocks, raw.body);
   return {
     slug: raw.slug,
     judul: raw.title,
@@ -93,7 +133,7 @@ export function toArtikel(raw: RawArticle): Artikel {
 
 /** Halaman statis cms → daftar blok isi. */
 export function toPageBlocks(raw: RawPage): RawContentBlock[] {
-  return normalizeBlocks(raw.body);
+  return pilihBlocks(raw.blocks, raw.body);
 }
 
 /** Komentar cms (rekursif) → Komentar FE; email TIDAK dibalikan API. */
@@ -143,9 +183,11 @@ export function toLiveChannel(raw: RawLiveStream): LiveChannel {
   return {
     id: raw.id,
     youtubeId: raw.youtubeId,
-    cabor: raw.sportName ?? "",
-    judul: raw.title,
-    venue: raw.venueName ?? "",
-    penonton: formatPenonton(raw.viewerCount),
+    cabor: raw.cabor ?? "",
+    judul: raw.judul,
+    venue: raw.venue ?? "",
+    penonton: formatPenonton(raw.penonton),
+    matchRef: raw.matchRef ?? undefined,
+    sorotan: raw.sorotan ?? false,
   };
 }

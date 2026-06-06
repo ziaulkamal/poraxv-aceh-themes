@@ -5,6 +5,7 @@ import { Badge } from "../components/ui/Badge";
 import { ArtikelCard } from "../components/sections/ArtikelCard";
 import { KomentarSection } from "../components/sections/KomentarSection";
 import { useArtikel, useArtikelCards } from "../lib/api/hooks";
+import { NO_IMAGE } from "../lib/noImage";
 
 /** Laman detail satu artikel berita, lengkap dgn meta & artikel terkait. */
 export function ArtikelPage() {
@@ -37,9 +38,13 @@ export function ArtikelPage() {
     <article className="bg-surface dark:bg-page-bg">
       {/* Hero artikel */}
       <header className="relative isolate overflow-hidden bg-surface-dark pt-28 text-surface sm:pt-32">
+        {/* Hero latar; tanpa gambar/URL rusak → pakai no-image.png. */}
         <img
-          src={artikel.image}
+          src={artikel.image || NO_IMAGE}
           alt={artikel.judul}
+          onError={(e) => {
+            if (e.currentTarget.src !== NO_IMAGE) e.currentTarget.src = NO_IMAGE;
+          }}
           className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface-dark via-surface-dark/80 to-surface-dark/40" />

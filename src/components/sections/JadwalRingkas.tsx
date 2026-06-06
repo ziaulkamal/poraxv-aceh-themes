@@ -1,8 +1,10 @@
 import { Clock, MapPin, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Container } from "../ui/Container";
 import { SectionHeading } from "../ui/SectionHeading";
 import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
+import { KontingenIcons } from "../ui/KontingenIcons";
+import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { useJadwalRingkas } from "../../lib/api/hooks";
@@ -24,9 +26,9 @@ export function JadwalRingkas() {
               title="Jadwal Pertandingan"
               description="Sorotan laga dan final pada hari-hari pertama PORA XV."
             />
-            <Button variant="outline" size="sm">
+            <Link to="/jadwal" className={button({ variant: "outline", size: "sm" })}>
               Jadwal Lengkap <ArrowRight className="size-4" />
-            </Button>
+            </Link>
           </div>
         </Reveal>
 
@@ -46,10 +48,20 @@ export function JadwalRingkas() {
                 </span>
               </div>
 
-              {/* Cabor & acara */}
+              {/* Kode laga, cabor & acara + ikon kontingen */}
               <div className="min-w-0 flex-1">
-                <Badge tone="outline" className="mb-1">{item.cabor}</Badge>
-                <p className="truncate font-semibold text-ink">{item.acara}</p>
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  {item.kode && (
+                    <span className="rounded bg-ink/5 px-1.5 py-0.5 font-mono text-[0.65rem] font-semibold uppercase tracking-wide text-ink-soft dark:bg-white/10">
+                      {item.kode}
+                    </span>
+                  )}
+                  {item.cabor && <Badge tone="outline">{item.cabor}</Badge>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <KontingenIcons items={item.kontingen} />
+                  <p className="truncate font-semibold text-ink">{item.acara}</p>
+                </div>
               </div>
 
               {/* Venue */}

@@ -25,9 +25,9 @@ export function CookieConsent() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[55] p-3 sm:p-5">
-      <div className="mx-auto flex max-w-3xl flex-col gap-4 rounded-xl bg-surface-dark p-5 text-surface shadow-panel ring-1 ring-white/10 sm:flex-row sm:items-center">
+      <div className="mx-auto flex max-w-3xl flex-col gap-4 rounded-xl bg-surface-dark p-5 text-white shadow-panel ring-1 ring-white/10 sm:flex-row sm:items-center">
         <Cookie className="size-8 shrink-0 text-emas" />
-        <p className="flex-1 text-sm leading-relaxed text-surface/80">
+        <p className="flex-1 text-sm leading-relaxed text-white/80">
           Kami menggunakan cookie untuk meningkatkan pengalaman Anda di situs PORA XV. Dengan
           melanjutkan, Anda menyetujui{" "}
           <Link to="/kebijakan-cookie" className="font-semibold text-emas hover:underline">
@@ -39,14 +39,14 @@ export function CookieConsent() {
           <button
             type="button"
             onClick={() => putuskan("ditolak")}
-            className="rounded-pill border border-surface/30 px-4 py-2 text-sm font-semibold text-surface transition hover:bg-surface/10"
+            className="rounded-pill border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
           >
             Tolak
           </button>
           <button
             type="button"
             onClick={() => putuskan("diterima")}
-            className="rounded-pill bg-merah px-5 py-2 text-sm font-semibold text-surface transition hover:bg-merah-deep"
+            className="rounded-pill bg-merah px-5 py-2 text-sm font-semibold text-white transition hover:bg-merah-deep"
           >
             Terima
           </button>

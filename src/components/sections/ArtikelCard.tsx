@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock } from "lucide-react";
 import { Badge } from "../ui/Badge";
+import { NO_IMAGE } from "../../lib/noImage";
 import type { Artikel } from "../../data/pages";
 
 /** Kartu artikel yang menautkan ke laman detail /berita/:slug. */
@@ -11,10 +12,14 @@ export function ArtikelCard({ item }: { item: Artikel }) {
       className="group flex flex-col overflow-hidden rounded-lg bg-surface shadow-card transition hover:-translate-y-1 hover:shadow-panel dark:ring-1 dark:ring-white/10"
     >
       <div className="aspect-[16/10] overflow-hidden">
+        {/* Tanpa gambar → pakai no-image.png; juga jaga-jaga bila URL rusak. */}
         <img
-          src={item.image}
+          src={item.image || NO_IMAGE}
           alt={item.judul}
           loading="lazy"
+          onError={(e) => {
+            if (e.currentTarget.src !== NO_IMAGE) e.currentTarget.src = NO_IMAGE;
+          }}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
       </div>

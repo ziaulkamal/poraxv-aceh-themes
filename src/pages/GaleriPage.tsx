@@ -65,7 +65,9 @@ function Lightbox({
       </button>
 
       <figure className="max-h-[88vh] max-w-4xl" onClick={(e) => e.stopPropagation()}>
-        <img src={foto.src} alt={foto.caption} className="max-h-[78vh] w-auto rounded-lg object-contain" />
+        {foto.src && (
+          <img src={foto.src} alt={foto.caption} className="max-h-[78vh] w-auto rounded-lg object-contain" />
+        )}
         <figcaption className="mt-3 text-center text-surface">
           <span className="text-xs font-semibold uppercase tracking-widest text-emas">{foto.kategori}</span>
           <p className="mt-1 text-sm text-surface/80">{foto.caption}</p>
@@ -133,12 +135,14 @@ export function GaleriPage() {
                   onClick={() => buka(i)}
                   className="group relative aspect-square overflow-hidden bg-surface-soft"
                 >
-                  <img
-                    src={f.src}
-                    alt={f.caption}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                  />
+                  {f.src && (
+                    <img
+                      src={f.src}
+                      alt={f.caption}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                  )}
                   <div className="absolute inset-0 flex items-center justify-center gap-5 bg-ink/55 opacity-0 transition group-hover:opacity-100">
                     <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-surface">
                       <Heart className="size-4 fill-surface" /> {120 + i * 7}
@@ -162,13 +166,15 @@ export function GaleriPage() {
                   onClick={() => buka(i)}
                   className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-xl shadow-card ring-1 ring-ink/5 transition hover:ring-emas/50 dark:ring-white/10"
                 >
-                  <div className={cn("relative overflow-hidden", aspekKustom[f.orientasi])}>
-                    <img
-                      src={f.src}
-                      alt={f.caption}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                  <div className={cn("relative overflow-hidden bg-surface-soft dark:bg-white/5", aspekKustom[f.orientasi])}>
+                    {f.src && (
+                      <img
+                        src={f.src}
+                        alt={f.caption}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
                     <span className="absolute left-3 top-3 rounded-pill bg-emas px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-ink">
                       {f.kategori}

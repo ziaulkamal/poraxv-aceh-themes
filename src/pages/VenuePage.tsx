@@ -52,15 +52,19 @@ export function VenuePage() {
           <div className="relative overflow-hidden rounded-xl shadow-panel ring-1 ring-ink/5 dark:ring-white/10">
             <div className="relative aspect-[16/10] sm:aspect-[21/9]">
               {venueList.map((v, i) => (
-                <img
+                <div
                   key={v.nama}
-                  src={v.image}
-                  alt={v.nama}
                   className={cn(
-                    "absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
+                    "absolute inset-0 transition-opacity duration-700",
                     i === aktif ? "opacity-100" : "opacity-0",
                   )}
-                />
+                >
+                  {v.image ? (
+                    <img src={v.image} alt={v.nama} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full bg-surface-dark" />
+                  )}
+                </div>
               ))}
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
 
@@ -73,12 +77,31 @@ export function VenuePage() {
                   <span className="inline-flex items-center gap-1.5"><MapPin className="size-4 text-emas" /> {venue.lokasi}</span>
                   {detail && <span className="inline-flex items-center gap-1.5"><Users className="size-4 text-emas" /> {detail.kapasitas}</span>}
                 </div>
-                {detail && <p className="mt-3 max-w-2xl text-sm leading-relaxed text-surface/70">{detail.deskripsi}</p>}
+                {(venue.deskripsi || detail?.deskripsi) && (
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-surface/70">
+                    {venue.deskripsi || detail?.deskripsi}
+                  </p>
+                )}
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {venue.cabor.map((c) => (
                     <Badge key={c} tone="soft">{c}</Badge>
                   ))}
                 </div>
+
+                {/* Galeri foto venue (dari CMS) */}
+                {venue.galeri && venue.galeri.length > 0 && (
+                  <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+                    {venue.galeri.map((g, i) => (
+                      <img
+                        key={i}
+                        src={g}
+                        alt={`${venue.nama} foto ${i + 1}`}
+                        loading="lazy"
+                        className="h-16 w-24 shrink-0 rounded-md object-cover ring-1 ring-surface/30"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Kontrol panah */}
@@ -128,7 +151,11 @@ export function VenuePage() {
                   i === aktif ? "ring-merah" : "ring-transparent opacity-70 hover:opacity-100",
                 )}
               >
-                <img src={v.image} alt={v.nama} className="h-full w-full object-cover" />
+                {v.image ? (
+                  <img src={v.image} alt={v.nama} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="h-full w-full bg-surface-dark" />
+                )}
               </button>
             ))}
           </div>

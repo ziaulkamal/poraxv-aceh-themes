@@ -138,13 +138,25 @@ export interface RawContentBlock {
   teks: string;
 }
 
+/** Dokumen TipTap mentah (`{ type:'doc', content:[...] }`) — bentuk `body` di cms-media. */
+export interface RawTiptapDoc {
+  type?: string;
+  content?: unknown[];
+}
+
+/** Body konten cms: blok FE jadi | string | dokumen TipTap mentah. */
+export type RawContentBody = RawContentBlock[] | string | RawTiptapDoc | null;
+
 /** Artikel cms (`GET /articles`, `/articles/:slug`). */
 export interface RawArticle {
   id: string;
   slug: string;
   title: string;
   excerpt: string | null;
-  body?: RawContentBlock[] | string | null;
+  /** Body mentah (umumnya dokumen TipTap). */
+  body?: RawContentBody;
+  /** Blok isi ternormalisasi dari backend (utamakan ini bila ada). */
+  blocks?: RawContentBlock[];
   publishedAt: string | null;
   viewCount?: number;
   category?: { name: string } | null;
@@ -157,7 +169,10 @@ export interface RawArticle {
 export interface RawPage {
   slug: string;
   title: string;
-  body?: RawContentBlock[] | string | null;
+  /** Body mentah (umumnya dokumen TipTap). */
+  body?: RawContentBody;
+  /** Blok isi ternormalisasi bila backend menyediakan (parity dgn artikel). */
+  blocks?: RawContentBlock[];
 }
 
 /** Komentar cms (tree APPROVED). Nama relasi anak bisa beragam → dinormalisasi adapter. */
@@ -183,15 +198,17 @@ export interface RawGalleryPhoto {
   orientation?: "POTRET" | "LANSKAP" | "KOTAK" | string | null;
 }
 
-/** Satu kanal siaran (`GET /live-streams`). */
+/** Satu kanal siaran (`GET /live-streams`, public view CMS — key Indonesia). */
 export interface RawLiveStream {
   id: string;
   youtubeId: string;
-  sportName?: string | null;
-  title: string;
-  venueName?: string | null;
-  viewerCount?: number;
-  isLive?: boolean;
+  cabor?: string | null;
+  judul: string;
+  venue?: string | null;
+  penonton?: number;
+  live?: boolean;
+  matchRef?: string | null; // penaut ke pertandingan simpora (id match)
+  sorotan?: boolean; // ditandai sorotan di CMS → tampil menonjol di WEB
 }
 
 /** Respons live-streams: master saklar + daftar kanal. */
@@ -200,10 +217,13 @@ export interface RawLiveStreamsResponse {
   channels: RawLiveStream[];
 }
 
-/** Enrichment venue cms (`GET /venue-content/:ref`). */
+/** Enrichment venue cms (`GET /venue-content` & `/venue-content/:ref`). */
 export interface RawVenueContent {
+  id?: string;
   venueRef: string;
   description: string | null;
-  image?: RawMediaRef | null;
-  gallery?: RawMediaRef[];
+  imageUrl: string | null; // CMS kirim URL siap-pakai (bukan objek media)
+  gallery?: unknown;
+  galleryVisible?: boolean; // bila false → galeri disembunyikan di WEB
+  updatedAt?: string;
 }

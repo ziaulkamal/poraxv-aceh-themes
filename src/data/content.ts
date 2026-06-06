@@ -62,6 +62,23 @@ function icon(file: string): string {
   return match[1];
 }
 
+/** Peta ikon bundel per basename (tanpa ekstensi) — kunci fallback dari nama file API. */
+const iconByBasename = new Map(
+  Object.entries(iconModules).map(([path, url]) => [
+    path.split("/").pop()!.replace(/\.[^.]+$/, ""),
+    url,
+  ])
+);
+
+/**
+ * Resolusi ikon bundel FE dari nama file API (mis. "muaythai.png").
+ * Cocokkan basename saja agar beda ekstensi (png↔jpg) tetap kena; "" bila tak ada.
+ */
+export function caborIconByFile(file: string): string {
+  if (!file) return "";
+  return iconByBasename.get(file.replace(/\.[^.]+$/, "")) ?? "";
+}
+
 /** Cabang olahraga yang dipertandingkan (data contoh; jumlah nomor PLACEHOLDER). */
 export const caborList: Cabor[] = [
   { nama: "Sepak Bola", iconSrc: icon("sepak-bola.png"), jumlahNomor: 1 },

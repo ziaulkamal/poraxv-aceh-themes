@@ -25,6 +25,20 @@ function logo(file: string): string {
   return match[1];
 }
 
+/** Peta wilayah_kode BPS (mis. "11.01") → URL lambang ter-bundle; utk ikon jadwal. */
+export const logoByWilayah: Record<string, string> = Object.fromEntries(
+  Object.entries(logoModules).map(([path, url]) => [
+    (path.split("/").pop() ?? "").replace(/\.png$/, ""),
+    url,
+  ]),
+);
+
+/** URL lambang kontingen dari wilayah_kode (level kab/kota "11.NN"); "" bila tak ada. */
+export function logoKontingen(wilayahKode?: string | null): string {
+  if (!wilayahKode) return "";
+  return logoByWilayah[wilayahKode] ?? logoByWilayah[wilayahKode.slice(0, 5)] ?? "";
+}
+
 /** 23 kabupaten/kota Aceh (kode BPS 11.xx) sebagai kontingen peserta PORA. */
 export const kontingenList: Kontingen[] = [
   { nama: "Aceh Selatan", logo: logo("11.01.png") },

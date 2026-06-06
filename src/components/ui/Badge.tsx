@@ -10,7 +10,7 @@ const badge = cva(
       tone: {
         merah: "bg-merah text-surface",
         emas: "bg-emas text-ink",
-        hijau: "bg-hijau text-ink",
+        hijau: "bg-hijau text-ink dark:bg-hijau/20 dark:text-hijau",
         soft: "bg-surface/90 text-ink shadow-card backdrop-blur",
         outline: "border border-ink/15 text-ink-soft",
       },

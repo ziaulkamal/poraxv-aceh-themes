@@ -18,7 +18,7 @@ interface PageHeaderProps {
  */
 export function PageHeader({ eyebrow, title, description, breadcrumb, children }: PageHeaderProps) {
   return (
-    <header className="relative isolate overflow-hidden bg-surface-dark pb-12 pt-28 text-surface sm:pb-16 sm:pt-32">
+    <header className="relative isolate overflow-hidden bg-surface-dark pb-12 pt-28 text-white sm:pb-16 sm:pt-32">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-40 left-1/4 h-72 w-[40rem] -translate-x-1/2 rounded-full bg-merah/25 blur-[130px]"
@@ -28,8 +28,8 @@ export function PageHeader({ eyebrow, title, description, breadcrumb, children }
         className="pointer-events-none absolute -bottom-24 right-0 h-64 w-80 rounded-full bg-emas/15 blur-[120px]"
       />
       <Container className="relative">
-        <nav className="flex items-center gap-1.5 text-xs text-surface/55">
-          <Link to="/" className="transition hover:text-surface">Beranda</Link>
+        <nav className="flex items-center gap-1.5 text-xs text-white/55">
+          <Link to="/" className="transition hover:text-white">Beranda</Link>
           <ChevronRight className="size-3.5" />
           <span className="text-emas">{breadcrumb ?? title}</span>
         </nav>
@@ -43,7 +43,7 @@ export function PageHeader({ eyebrow, title, description, breadcrumb, children }
           {title}
         </h1>
         {description && (
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-surface/65 sm:text-base">
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
             {description}
           </p>
         )}

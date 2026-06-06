@@ -5,9 +5,11 @@
 import type { Cabor, JadwalItem, MedaliKontingen, Venue } from "../../../types";
 import type { Pertandingan, Peserta } from "../../../data/pages";
 import { formatJam, formatTanggalSingkat } from "../../datetime";
+import { logoKontingen } from "../../../data/kontingen";
 import type {
   RawLeaderboardRow,
   RawMatch,
+  RawMatchParticipant,
   RawMatchStatus,
   RawResultData,
   RawSport,
@@ -31,7 +33,18 @@ export function toVenue(raw: RawVenue): Venue {
     lokasi: raw.address ?? raw.wilayah?.nama ?? "",
     cabor: [...new Set(cabor)],
     image: "",
+    ref: String(raw.id),
   };
+}
+
+/** Ikon kontingen peserta (lewati yang tak punya lambang); nama hanya utk alt. */
+function toKontingenIcons(participants: RawMatch["participants"]): JadwalItem["kontingen"] {
+  return (participants ?? [])
+    .map((p) => ({
+      nama: p.contingent?.short_name ?? p.contingent?.name ?? "",
+      logo: logoKontingen(p.contingent?.wilayah_kode),
+    }))
+    .filter((k) => k.logo);
 }
 
 /** Pertandingan → satu baris JadwalItem (waktu literal wall-clock). */
@@ -43,6 +56,9 @@ export function toJadwalItem(raw: RawMatch): JadwalItem {
     cabor,
     acara: raw.round ?? raw.sportCategory?.name ?? raw.match_code,
     venue: raw.venue?.name ?? "",
+    status: toStatus(raw.status),
+    kode: raw.match_code,
+    kontingen: toKontingenIcons(raw.participants),
   };
 }
 
@@ -71,11 +87,14 @@ function toKlok(raw: RawMatch): string {
   return formatJam(raw.scheduled_at);
 }
 
-/** Satu sisi peserta (kontingen sebagai nama bila atlet tak dimuat). */
-function toPeserta(raw: RawMatch["participants"], side: number): Peserta {
-  const p = raw?.[side];
+/** Satu peserta → Peserta FE; ikon kontingen dari wilayah_kode (tanpa tampil nama). */
+function toPeserta(p: RawMatchParticipant | undefined): Peserta {
   const nama = p?.contingent?.name ?? "TBD";
-  return { nama, kontingen: p?.contingent?.name ?? nama };
+  return {
+    nama,
+    kontingen: p?.contingent?.name ?? nama,
+    logo: logoKontingen(p?.contingent?.wilayah_kode),
+  };
 }
 
 /** Rincian set/game [a,b] bila ada (toleran dua bentuk payload). */
@@ -99,10 +118,11 @@ export function toPertandingan(raw: RawMatch, result?: RawResultData): Pertandin
     status: toStatus(raw.status),
     klok: toKlok(raw),
     venue: raw.venue?.name ?? "",
-    a: toPeserta(raw.participants, 0),
-    b: toPeserta(raw.participants, 1),
+    a: toPeserta(raw.participants?.[0]),
+    b: toPeserta(raw.participants?.[1]),
     skorA: Number(result?.home ?? 0),
     skorB: Number(result?.away ?? 0),
     set: toSets(result),
+    peserta: (raw.participants ?? []).map(toPeserta),
   };
 }

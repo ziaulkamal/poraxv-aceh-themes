@@ -18,6 +18,15 @@ export function CaborCard({ item }: { item: Cabor }) {
             src={item.iconSrc}
             alt={`Ikon ${item.nama}`}
             loading="lazy"
+            width={64}
+            height={64}
+            onError={(e) => {
+              // URL ikon Simpora 404 → jatuh ke ikon bundel FE sekali saja (cegah loop).
+              const img = e.currentTarget;
+              if (img.dataset.fellBack || !item.iconFallback) return;
+              img.dataset.fellBack = "1";
+              img.src = item.iconFallback;
+            }}
             className="size-full object-contain p-1 transition duration-300 group-hover:scale-105"
           />
         ) : (
@@ -31,7 +40,6 @@ export function CaborCard({ item }: { item: Cabor }) {
         <h3 className="truncate font-display text-base font-semibold uppercase text-ink">
           {item.nama}
         </h3>
-        <p className="text-xs text-ink-muted">{item.jumlahNomor} nomor medali</p>
       </div>
     </div>
   );

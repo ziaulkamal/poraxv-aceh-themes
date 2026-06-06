@@ -1,22 +1,31 @@
 import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Reveal } from "../components/ui/Reveal";
+import { SelectFilter } from "../components/ui/SelectFilter";
 import { ArtikelCard } from "../components/sections/ArtikelCard";
-import { cn } from "../lib/cn";
 import { useArtikelCards } from "../lib/api/hooks";
 
-/** Laman daftar berita: filter kategori + grid artikel menuju laman detail. */
+/** Laman daftar berita: cari judul + filter kategori (select2) menuju laman detail. */
 export function BeritaPage() {
   const artikelList = useArtikelCards();
   const kategoriList = useMemo(
     () => ["Semua", ...Array.from(new Set(artikelList.map((a) => a.kategori)))],
     [artikelList],
   );
-  const [aktif, setAktif] = useState("Semua");
+  const [kategori, setKategori] = useState("Semua");
+  const [cari, setCari] = useState("");
 
-  const tersaring =
-    aktif === "Semua" ? artikelList : artikelList.filter((a) => a.kategori === aktif);
+  const tersaring = useMemo(
+    () =>
+      artikelList.filter(
+        (a) =>
+          (kategori === "Semua" || a.kategori === kategori) &&
+          a.judul.toLowerCase().includes(cari.toLowerCase().trim()),
+      ),
+    [artikelList, kategori, cari],
+  );
 
   return (
     <>
@@ -29,23 +38,24 @@ export function BeritaPage() {
 
       <section className="bg-surface py-12 dark:bg-page-bg sm:py-16">
         <Container>
-          {/* Filter kategori */}
-          <div className="flex flex-wrap gap-2">
-            {kategoriList.map((k) => (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setAktif(k)}
-                className={cn(
-                  "rounded-pill px-4 py-2 text-sm font-medium transition",
-                  aktif === k
-                    ? "bg-merah text-surface"
-                    : "bg-surface-soft text-ink-soft hover:bg-merah/10 hover:text-merah dark:bg-white/5 dark:text-surface/70",
-                )}
-              >
-                {k}
-              </button>
-            ))}
+          {/* Cari judul + filter kategori (select2) */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-1 items-center gap-2 rounded-pill bg-surface-soft px-4 py-2.5 ring-1 ring-ink/10 dark:ring-white/15">
+              <Search className="size-4 shrink-0 text-ink-muted" />
+              <input
+                value={cari}
+                onChange={(e) => setCari(e.target.value)}
+                placeholder="Cari judul berita…"
+                className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink-muted"
+              />
+            </div>
+            <SelectFilter
+              value={kategori}
+              onChange={setKategori}
+              options={kategoriList}
+              placeholder="Kategori"
+              className="sm:w-60"
+            />
           </div>
 
           <div className="mt-8 grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(290px,1fr))]">
@@ -55,6 +65,12 @@ export function BeritaPage() {
               </Reveal>
             ))}
           </div>
+
+          {tersaring.length === 0 && (
+            <p className="py-16 text-center text-sm text-ink-muted">
+              Tidak ada berita yang cocok dengan pencarian/filter.
+            </p>
+          )}
         </Container>
       </section>
     </>

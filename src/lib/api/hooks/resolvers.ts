@@ -8,6 +8,7 @@ import type { Artikel, Foto, Pertandingan } from "../../../data/pages";
 import type { Sosial } from "../../../data/content";
 import {
   beritaList,
+  caborIconByFile,
   caborList as staticCabor,
   event as staticEvent,
   jadwalList as staticJadwal,
@@ -15,6 +16,7 @@ import {
   socials as staticSocials,
   venueList as staticVenue,
 } from "../../../data/content";
+import { API_CONFIG } from "../config";
 import {
   artikelList,
   galeriFoto as staticGaleri,
@@ -30,6 +32,7 @@ import {
   useGaleri,
   useSettings,
   useStreaming,
+  useVenueContents,
 } from "./media";
 import type { StreamingState } from "./media";
 import { useCabor, useJadwal, useKlasemen, useLiveSkor, useVenue } from "./sports";
@@ -63,30 +66,67 @@ export function useArtikelCards(): Artikel[] {
   return data && data.length > 0 ? data : artikelList;
 }
 
-/** Ikon cabor bundel FE per nama — fallback bila maskot API kosong. */
+/** Ikon cabor bundel FE per nama — fallback sekunder bila nama file API tak match. */
 const caborIconByNama = new Map(staticCabor.map((c) => [c.nama, c.iconSrc]));
 /** Foto venue bundel FE per nama — fallback bila enrichment cms belum ada. */
 const venueImageByNama = new Map(staticVenue.map((v) => [v.nama, v.image]));
 
-/** Cabor dari simpora; iconSrc jatuh ke ikon bundel FE bila maskot API kosong. */
+/**
+ * Cabor dari simpora. API `icon` hanya nama file (mis. "anggar.png"), jadi:
+ *  - iconSrc  = URL penuh ke server Simpora (coba dimuat lebih dulu).
+ *  - iconFallback = ikon bundel FE (by nama file, lalu by nama cabor) — dipakai
+ *    <img onError> bila file di Simpora belum ada/404. Hybrid: live + fallback mulus.
+ */
 export function useCaborList(): Cabor[] {
   const { data } = useCabor();
   if (!data || data.length === 0) return staticCabor;
-  return data.map((c) => (c.iconSrc ? c : { ...c, iconSrc: caborIconByNama.get(c.nama) ?? "" }));
+  return data.map((c) => {
+    const fallback = caborIconByFile(c.iconSrc) || caborIconByNama.get(c.nama) || "";
+    const apiUrl = c.iconSrc ? `${API_CONFIG.simporaIconBase}/${c.iconSrc}` : "";
+    return { ...c, iconSrc: apiUrl || fallback, iconFallback: fallback };
+  });
 }
 
-/** Venue core dari simpora; image jatuh ke foto bundel FE bila belum di-enrich. */
+/**
+ * Venue core dari simpora + enrichment CMS VenueContent (gambar & deskripsi)
+ * dipetakan via venueRef = id venue. Gambar: CMS → bundel FE → kosong.
+ */
 export function useVenueList(): Venue[] {
   const { data } = useVenue();
+  const { data: contents } = useVenueContents();
   if (!data || data.length === 0) return staticVenue;
-  return data.map((v) => (v.image ? v : { ...v, image: venueImageByNama.get(v.nama) ?? "" }));
+  const byRef = new Map((contents ?? []).map((c) => [c.venueRef, c]));
+  return data.map((v) => {
+    const c = v.ref ? byRef.get(v.ref) : undefined;
+    return {
+      ...v,
+      image: c?.imageUrl || v.image || venueImageByNama.get(v.nama) || "",
+      deskripsi: c?.description ?? v.deskripsi,
+      // galleryVisible default true; sembunyikan galeri bila admin mematikannya.
+      galeri: c?.galleryVisible === false ? [] : galeriUrls(c?.gallery),
+    };
+  });
 }
 
-/** Jadwal terdekat (live atau statis), opsional dibatasi jumlahnya. */
+/** Normalisasi gallery CMS (string[] atau {url}[]) → array URL. */
+function galeriUrls(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((g) => (typeof g === "string" ? g : (g as { url?: string })?.url ?? ""))
+    .filter(Boolean);
+}
+
+/** Jadwal terdekat homepage: hanya laga belum selesai (exclude finished). */
 export function useJadwalRingkas(limit?: number): JadwalItem[] {
-  const { data } = useJadwal();
+  const { data } = useJadwal({ status: "scheduled,ongoing", per_page: 50 });
   const list = data && data.length > 0 ? data : staticJadwal;
   return limit ? list.slice(0, limit) : list;
+}
+
+/** Jadwal keseluruhan (semua status, termasuk selesai) untuk laman jadwal. */
+export function useJadwalLengkap(): JadwalItem[] {
+  const { data } = useJadwal({ per_page: 200 });
+  return data && data.length > 0 ? data : staticJadwal;
 }
 
 /** Klasemen medali (live atau statis). */
