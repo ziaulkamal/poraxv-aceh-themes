@@ -2,8 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, X, ArrowRight, CornerDownLeft } from "lucide-react";
 import { cn } from "../../lib/cn";
-import { caborList, jadwalList, venueList } from "../../data/content";
-import { artikelList, pertandinganList, liveChannels } from "../../data/pages";
+import {
+  useArtikelCards,
+  useCaborList,
+  useJadwalRingkas,
+  useLiveSkorList,
+  useStreamingState,
+  useVenueList,
+} from "../../lib/api/hooks";
 
 type Tipe = "Berita" | "Jadwal" | "Live" | "Siaran" | "Venue" | "Cabor";
 
@@ -37,7 +43,20 @@ const pintasan = [
 
 /** Modal pencarian global (gaya command-palette) lintas konten situs. */
 export function SearchModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  // Body dipisah agar query agregasi (mis. live skor) hanya jalan saat modal dibuka.
+  if (!open) return null;
+  return <SearchModalBody onClose={onClose} />;
+}
+
+/** Isi modal: agregasi hasil dari cms + simpora (live-or-fallback) lalu filter. */
+function SearchModalBody({ onClose }: { onClose: () => void }) {
   const [q, setQ] = useState("");
+  const artikelList = useArtikelCards();
+  const venueList = useVenueList();
+  const jadwalList = useJadwalRingkas();
+  const pertandinganList = useLiveSkorList();
+  const { channels: liveChannels } = useStreamingState();
+  const caborList = useCaborList();
 
   // Indeks gabungan seluruh konten yang dapat dicari.
   const indeks = useMemo<Hasil[]>(() => {
@@ -100,15 +119,13 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
       }),
     );
     return items;
-  }, []);
+  }, [artikelList, venueList, jadwalList, pertandinganList, liveChannels, caborList]);
 
   const kueri = q.trim().toLowerCase();
   const hasil = kueri ? indeks.filter((i) => i.key.includes(kueri)).slice(0, 8) : [];
 
-  // Reset kueri & kunci scroll saat modal dibuka/ditutup; Esc untuk menutup.
+  // Kunci scroll & Esc untuk menutup (body hanya ada saat modal terbuka).
   useEffect(() => {
-    if (!open) return;
-    setQ("");
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -116,9 +133,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
     };
-  }, [open, onClose]);
-
-  if (!open) return null;
+  }, [onClose]);
 
   return (
     <div

@@ -8,4 +8,6 @@ export const API_CONFIG = {
   simporaUrl: trim(import.meta.env.VITE_SIMPORA_API_URL ?? "http://localhost:8000/api/v1"),
   cmsUrl: trim(import.meta.env.VITE_CMS_API_URL ?? "http://localhost:3000/api/v1"),
   cmsWsUrl: trim(import.meta.env.VITE_CMS_WS_URL ?? "http://localhost:3000"),
+  // Real-time hanya aktif bila WS di-set eksplisit (gateway tersedia) — hindari retry sia-sia.
+  wsEnabled: !!import.meta.env.VITE_CMS_WS_URL,
 } as const;
