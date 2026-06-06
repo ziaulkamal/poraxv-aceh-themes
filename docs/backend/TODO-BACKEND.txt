@@ -16,76 +16,76 @@
 --------------------------------------------------------------------------
  FE-0 — FONDASI LAPISAN DATA (prasyarat semua)
 --------------------------------------------------------------------------
-[ ] Tambah dependency: @tanstack/react-query  axios  socket.io-client
-[ ] src/lib/api/simpora.ts  (baseURL VITE_SIMPORA_API_URL, ekstraksi paginator defensif)
-[ ] src/lib/api/cms.ts      (baseURL VITE_CMS_API_URL, envelope {success,data,meta})
-[ ] src/lib/api/socket.ts   (io(VITE_CMS_WS_URL), reconnect)
-[ ] src/lib/api/adapters/{sports.ts, media.ts}  -> map ke tipe di src/types
-[ ] src/lib/api/hooks/      (React Query hooks per entitas)
-[ ] QueryClientProvider di src/main.tsx
-[ ] .env: VITE_SIMPORA_API_URL, VITE_CMS_API_URL, VITE_CMS_WS_URL
-[ ] util tanggal id-ID + WALL-CLOCK parser (scheduled_at: JANGAN new Date(ISO))
+[x] Tambah dependency: @tanstack/react-query  axios  socket.io-client
+[x] src/lib/api/simpora.ts  (baseURL VITE_SIMPORA_API_URL, ekstraksi paginator defensif)
+[x] src/lib/api/cms.ts      (baseURL VITE_CMS_API_URL, envelope {success,data,meta})
+[x] src/lib/api/socket.ts   (io(VITE_CMS_WS_URL), reconnect)
+[x] src/lib/api/adapters/{sports.ts, media.ts}  -> map ke tipe di src/types
+[x] src/lib/api/hooks/      (React Query hooks per entitas + resolvers live-or-fallback)
+[x] QueryClientProvider di src/main.tsx
+[x] .env: VITE_SIMPORA_API_URL, VITE_CMS_API_URL, VITE_CMS_WS_URL (+ .env.example)
+[x] util tanggal id-ID + WALL-CLOCK parser (scheduled_at: JANGAN new Date(ISO))
 
 --------------------------------------------------------------------------
  FE-1 — KONTEN cms (read, dependensi rendah)
 --------------------------------------------------------------------------
-[ ] useSettings()  -> ganti objek `event` & `socials` (Hero, CountdownTimer, Footer, TentangPora)
-[ ] usePage(slug)  -> SyaratKetentuanPage, KebijakanCookiePage (render body blok)
-[ ] useBerita()    -> Berita.tsx (section) + BeritaPage  (adapter media)
-[ ] useArtikel(slug) -> ArtikelPage  (isi blok paragraf/subjudul/kutipan, durasiBaca dihitung)
+[x] useSettings()  -> ganti objek `event` & `socials` (Hero, CountdownTimer, Footer, TentangPora) [useEventInfo/useSocialLinks]
+[x] usePage(slug)  -> SyaratKetentuanPage, KebijakanCookiePage (render body blok via BlokKonten, fallback statis)
+[x] useBerita()    -> Berita.tsx (section) + BeritaPage  (adapter media; BeritaPage via useArtikelCards)
+[x] useArtikel(slug) -> ArtikelPage  (isi blok paragraf/subjudul/kutipan, durasiBaca dihitung; fallback statis)
 
 --------------------------------------------------------------------------
  FE-2 — INTERAKSI cms (tulis publik)
 --------------------------------------------------------------------------
-[ ] useKomentar(slug) (tree) + mutasi kirim + suka -> KomentarSection.tsx
-[ ] Notice "menunggu moderasi" setelah submit komentar (bukan optimistik tampil)
-[ ] kirimKontak() mutation -> KontakPage.tsx (state sukses sudah ada)
-[ ] useGaleri() -> GaleriPage (mosaic + feed IG + lightbox), adapter Foto
+[x] useKomentar(slug) (tree) + mutasi kirim + suka -> KomentarSection.tsx (fallback demo lokal saat backend mati)
+[x] Notice "menunggu moderasi" setelah submit komentar (bukan optimistik tampil) — saat mutation sukses
+[x] kirimKontak() mutation -> KontakPage.tsx (state sukses sudah ada; + honeypot)
+[x] useGaleri() -> GaleriPage (mosaic + feed IG + lightbox), adapter Foto
 
 --------------------------------------------------------------------------
  FE-3 — DATA OLAHRAGA (simpora read, belum real-time)
 --------------------------------------------------------------------------
-[ ] useCabor()    -> CabangOlahraga.tsx / CaborCard (ikon: maskot API atau fallback bundel FE)
-[ ] useVenue()    -> Venue.tsx / VenuePage / VenueCard (core dari simpora)
-[ ] useVenueContent() (cms) -> gabung deskripsi+foto ke detail venue
-[ ] useJadwal()   -> JadwalRingkas.tsx (WALL-CLOCK)
-[ ] useKlasemen() -> KlasemenMedali.tsx / KlasemenPage
-[ ] useLiveSkor() -> LivePage (daftar pertandingan + result + set/game)
-[ ] Kontingen: PERTAHANKAN statis (src/data/kontingen.ts) atau derive nama dari leaderboard
-[ ] TentangPora stats: derive dari list yang sudah di-fetch
+[x] useCabor()    -> CabangOlahraga.tsx / CaborCard (ikon: maskot API atau fallback bundel FE by nama)
+[x] useVenue()    -> Venue.tsx / VenuePage / VenueCard (core dari simpora; image fallback bundel FE)
+[~] useVenueContent() (cms) -> hook siap; merge ke detail venue MENUNGGU modul cms VenueContent + ref id di tipe Venue
+[x] useJadwal()   -> JadwalRingkas.tsx (WALL-CLOCK)
+[x] useKlasemen() -> KlasemenMedali.tsx / KlasemenPage
+[x] useLiveSkor() -> LivePage (daftar pertandingan + result + set/game)
+[x] Kontingen: PERTAHANKAN statis (src/data/kontingen.ts) — dipakai apa adanya
+[x] TentangPora stats: derive dari list yang sudah di-fetch (cabor/venue/klasemen)
 
 --------------------------------------------------------------------------
  FE-4 — LIVE STREAMING (cms, read)
 --------------------------------------------------------------------------
-[ ] useStreaming() -> { streaming_enabled, channels[] } -> LiveStreaming.tsx
-[ ] Render grid embed YouTube + status aktif/tentatif
+[x] useStreaming() -> { streaming_enabled, channels[] } -> LiveStreaming.tsx (useStreamingState, fallback statis)
+[x] Render grid embed YouTube + status aktif/tentatif (sudah ada; kini data dari cms)
 
 --------------------------------------------------------------------------
  FE-5 — REAL-TIME (socket.io dari gateway cms-media)
 --------------------------------------------------------------------------
-[ ] socket.on('match.score.updated')  -> setQueryData(['match',id]) + invalidate(['matches','live'])
-[ ] socket.on('match.status.updated') -> pindah kartu antar grup status
-[ ] socket.on('leaderboard.updated')  -> invalidate(['leaderboard'])
-[ ] socket.on('streaming.toggled')    -> setQueryData(['streaming'])
-[ ] socket.on('stream.updated')       -> invalidate(['streaming'])
-[ ] socket.on('stream.viewers')       -> update angka penonton kartu
-[ ] Pasang listener di: LivePage, KlasemenPage, KlasemenMedali, LiveStreaming, JadwalRingkas
-[ ] refetchOnReconnect aktif; fallback cache saat socket putus
-[ ] UJI E2E: ubah skor di admin -> tampil di FE TANPA reload
+[x] socket.on('match.score.updated')  -> invalidate(['matches','live'])   (useRealtimeSync)
+[x] socket.on('match.status.updated') -> invalidate(['matches','live'])
+[x] socket.on('leaderboard.updated')  -> invalidate(['leaderboard'])
+[x] socket.on('streaming.toggled')    -> invalidate(['streaming'])
+[x] socket.on('stream.updated')       -> invalidate(['streaming'])
+[x] socket.on('stream.viewers')       -> invalidate(['streaming'])  (refetch perbarui penonton)
+[x] Listener dipasang SEKALI global di AppLayout (mencakup semua halaman) — gate via API_CONFIG.wsEnabled
+[x] refetchOnReconnect aktif (default queryClient); fallback cache saat socket putus
+[ ] UJI E2E: ubah skor di admin -> tampil di FE TANPA reload (MENUNGGU gateway cms-media FASE 10F)
 
 --------------------------------------------------------------------------
  FE-6 — PENCARIAN GLOBAL (agregasi)
 --------------------------------------------------------------------------
-[ ] SearchModal: gabung cms /articles?q + simpora /sports,/venues,/matches + cms /live-streams
-[ ] Map ke Hasil{tipe,judul,sub,to,section?,streamId?}; debounce 250ms; max 8
+[x] SearchModal: gabung cms (articles) + simpora (sports/venues/matches) + cms (live-streams) via resolvers
+[x] Map ke Hasil{tipe,judul,sub,to,section?,streamId?}; max 8 (filter dari cache React Query — debounce tak perlu)
 
 --------------------------------------------------------------------------
  FE-7 — RAPIKAN & PRODUKSI
 --------------------------------------------------------------------------
-[ ] Semua fetch punya loading/empty/error state (tidak crash saat API/WS mati)
-[ ] Hapus/disable src/data/*.ts yang tak terpakai (kecuali kontingen.ts referensi statis)
-[ ] (opsional SEO) SSR/pre-render + BrowserRouter + sitemap.xml
-[ ] Smoke test seluruh halaman FE (light/dark, mobile)
+[~] loading/empty/error: pola live-or-fallback jaga UI hidup saat API/WS mati; loading eksplisit di ArtikelPage
+[ ] Hapus src/data/*.ts: SENGAJA DIPERTAHANKAN sebagai sumber fallback (live-or-fallback), bukan dihapus
+[ ] (opsional SEO) SSR/pre-render + BrowserRouter + sitemap.xml — di luar scope integrasi ini
+[~] Smoke test: build hijau (tsc -b + vite build); verifikasi visual manual oleh user (light/dark, mobile)
 
 ==========================================================================
  KETERGANTUNGAN LINTAS-REPO (blocking)
