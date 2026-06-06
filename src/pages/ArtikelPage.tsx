@@ -37,7 +37,7 @@ export function ArtikelPage() {
   return (
     <article className="bg-surface dark:bg-page-bg">
       {/* Hero artikel */}
-      <header className="relative isolate overflow-hidden bg-surface-dark pt-28 text-surface sm:pt-32">
+      <header className="relative isolate overflow-hidden bg-surface-dark pt-28 text-white sm:pt-32">
         {/* Hero latar; tanpa gambar/URL rusak → pakai no-image.png. */}
         <img
           src={artikel.image || NO_IMAGE}
@@ -49,10 +49,10 @@ export function ArtikelPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface-dark via-surface-dark/80 to-surface-dark/40" />
         <Container className="relative pb-12 sm:pb-16">
-          <nav className="flex items-center gap-1.5 text-xs text-surface/55">
-            <Link to="/" className="transition hover:text-surface">Beranda</Link>
+          <nav className="flex items-center gap-1.5 text-xs text-white/55">
+            <Link to="/" className="transition hover:text-white">Beranda</Link>
             <ChevronRight className="size-3.5" />
-            <Link to="/berita" className="transition hover:text-surface">Berita</Link>
+            <Link to="/berita" className="transition hover:text-white">Berita</Link>
             <ChevronRight className="size-3.5" />
             <span className="text-emas">{artikel.kategori}</span>
           </nav>
@@ -62,7 +62,7 @@ export function ArtikelPage() {
             <h1 className="mt-4 font-display text-3xl font-bold uppercase leading-tight tracking-wide sm:text-4xl md:text-5xl">
               {artikel.judul}
             </h1>
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-surface/65">
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/65">
               <span className="inline-flex items-center gap-1.5"><User className="size-4 text-emas" /> {artikel.penulis}</span>
               <span className="inline-flex items-center gap-1.5"><Calendar className="size-4 text-emas" /> {artikel.tanggal}</span>
               <span className="inline-flex items-center gap-1.5"><Clock className="size-4 text-emas" /> {artikel.durasiBaca} baca</span>

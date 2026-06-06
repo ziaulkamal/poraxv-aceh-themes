@@ -145,6 +145,7 @@ export function toKomentar(raw: RawComment): Komentar {
     waktu: formatWaktuRelatif(raw.createdAt),
     isi: raw.body,
     suka: raw.likeCount ?? 0,
+    isAdmin: raw.isAdmin ?? false,
     balasan: anak.map(toKomentar),
   };
 }

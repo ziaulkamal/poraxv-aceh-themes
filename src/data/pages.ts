@@ -130,6 +130,8 @@ export interface Komentar {
   waktu: string;
   isi: string;
   suka: number;
+  /** True bila komentar dari staf/panitia (user CMS) — tampilkan lencana. */
+  isAdmin?: boolean;
   balasan: Komentar[];
 }
 

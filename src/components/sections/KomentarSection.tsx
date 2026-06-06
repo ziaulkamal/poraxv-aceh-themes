@@ -136,7 +136,7 @@ function KomentarForm({
         <button
           type="submit"
           disabled={!valid}
-          className="inline-flex items-center gap-2 rounded-pill bg-merah px-5 py-2.5 text-sm font-semibold text-surface transition hover:bg-merah-deep disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center gap-2 rounded-pill bg-merah px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-merah-deep disabled:cursor-not-allowed disabled:opacity-40"
         >
           {ringkas ? "Balas" : "Kirim Komentar"} <Send className="size-4" />
         </button>
@@ -160,7 +160,7 @@ function KomentarItem({
 }) {
   const [balasTerbuka, setBalasTerbuka] = useState(false);
   const disukai = liked.has(komentar.id);
-  const isAdmin = komentar.nama.toLowerCase().includes("admin");
+  const isAdmin = komentar.isAdmin ?? false;
 
   return (
     <li>
@@ -179,7 +179,7 @@ function KomentarItem({
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-semibold text-ink">{komentar.nama}</span>
               {isAdmin && (
-                <span className="rounded-pill bg-merah px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-surface">
+                <span className="rounded-pill bg-merah px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider text-white">
                   Panitia
                 </span>
               )}
@@ -303,7 +303,7 @@ export function KomentarSection({ slug }: { slug?: string }) {
       </h2>
 
       {moderasi && (
-        <div className="mt-6 rounded-lg bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau-deep">
+        <div className="mt-6 rounded-lg bg-hijau/10 px-4 py-3 text-sm font-medium text-hijau-deep dark:text-hijau">
           Komentarmu terkirim dan menunggu moderasi sebelum ditampilkan.
         </div>
       )}
