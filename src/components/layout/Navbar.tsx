@@ -1,23 +1,35 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Sun, Moon, Radio, Phone, Search } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { SearchModal } from "./SearchModal";
-import logo from "../../assets/brand/logo.png";
+import { MenuLink } from "./MenuLink";
+import { useBranding, useMenus } from "../../lib/api/hooks";
+import type { MenuLinkType, MenuNode } from "../../lib/api/types";
 
-/** Tautan yang menggulir ke section di landing (bukan rute terpisah). */
-const sectionLinks = [
-  { label: "Beranda", id: "beranda" },
-  { label: "Tentang", id: "tentang" },
-  { label: "Jadwal", id: "jadwal" },
-  { label: "Klasemen", id: "klasemen" },
-  { label: "Venue", id: "venue" },
-  { label: "Berita", id: "berita" },
-];
+/** Bangun node menu fallback (dipakai saat API CMS belum tersedia). */
+const fb = (label: string, type: MenuLinkType, url: string, i: number): MenuNode => ({
+  id: `fb-main-${i}`,
+  location: "MAIN",
+  parentId: null,
+  label,
+  type,
+  url,
+  openInNewTab: false,
+  position: i,
+  isVisible: true,
+  children: [],
+});
 
-/** Tautan ke laman terpisah. */
-const pageLinks = [
-  { label: "Galeri", to: "/galeri" },
+/** Menu utama fallback: 6 anchor section + 1 route. */
+const FALLBACK_MAIN: MenuNode[] = [
+  fb("Beranda", "ANCHOR", "beranda", 0),
+  fb("Tentang", "ANCHOR", "tentang", 1),
+  fb("Jadwal", "ANCHOR", "jadwal", 2),
+  fb("Klasemen", "ANCHOR", "klasemen", 3),
+  fb("Venue", "ANCHOR", "venue", 4),
+  fb("Berita", "ANCHOR", "berita", 5),
+  fb("Galeri", "ROUTE", "/galeri", 6),
 ];
 
 const iconBtn =
@@ -37,6 +49,10 @@ export function Navbar() {
   const [cariBuka, setCariBuka] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { data: menus } = useMenus();
+  const mainMenu = menus?.main?.length ? menus.main : FALLBACK_MAIN;
+  const branding = useBranding();
+  const brandLogo = dark ? branding.logoMainDark : branding.logoMainLight;
 
   /** Pergi ke section landing; bila sedang di laman lain, pulang dulu ke "/". */
   const goSection = (id: string, after?: () => void) => {
@@ -155,7 +171,7 @@ export function Navbar() {
               className="flex items-center gap-2"
             >
               <img
-                src={logo}
+                src={brandLogo}
                 alt="Logo PORA Aceh Jaya"
                 className="h-10 w-auto shrink-0"
               />
@@ -166,29 +182,17 @@ export function Navbar() {
 
             {/* Navigasi desktop */}
             <nav className="hidden items-center gap-7 lg:flex xl:gap-8">
-              {sectionLinks.map((link) => (
-                <button
-                  key={link.label}
-                  type="button"
-                  onClick={() => goSection(link.id)}
-                  className="text-sm font-medium text-ink-soft transition hover:text-merah"
-                >
-                  {link.label}
-                </button>
-              ))}
-              {pageLinks.map((link) => (
-                <NavLink
-                  key={link.label}
-                  to={link.to}
-                  className={({ isActive }) =>
+              {mainMenu.map((item) => (
+                <MenuLink
+                  key={item.id}
+                  item={item}
+                  className={(active) =>
                     cn(
                       "text-sm font-medium transition hover:text-merah",
-                      isActive ? "text-merah" : "text-ink-soft",
+                      active ? "text-merah" : "text-ink-soft",
                     )
                   }
-                >
-                  {link.label}
-                </NavLink>
+                />
               ))}
             </nav>
 
@@ -232,7 +236,7 @@ export function Navbar() {
             className="flex items-center gap-2"
           >
             <img
-              src={logo}
+              src={brandLogo}
               alt="Logo PORA Aceh Jaya"
               className="h-10 w-auto shrink-0"
             />
@@ -251,31 +255,18 @@ export function Navbar() {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
-          {sectionLinks.map((link) => (
-            <button
-              key={link.label}
-              type="button"
-              onClick={() => goSection(link.id, () => setIsOpen(false))}
-              className="rounded-md px-3 py-3 text-left text-base font-medium text-ink-soft transition hover:bg-surface-soft hover:text-merah"
-            >
-              {link.label}
-            </button>
-          ))}
-          <span className="mx-3 my-2 h-px bg-ink/10" />
-          {pageLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              onClick={() => setIsOpen(false)}
-              className={({ isActive }) =>
+          {mainMenu.map((item) => (
+            <MenuLink
+              key={item.id}
+              item={item}
+              onNavigate={() => setIsOpen(false)}
+              className={(active) =>
                 cn(
-                  "rounded-md px-3 py-3 text-base font-medium transition hover:bg-surface-soft hover:text-merah",
-                  isActive ? "text-merah" : "text-ink-soft",
+                  "rounded-md px-3 py-3 text-left text-base font-medium transition hover:bg-surface-soft hover:text-merah",
+                  active ? "text-merah" : "text-ink-soft",
                 )
               }
-            >
-              {link.label}
-            </NavLink>
+            />
           ))}
         </nav>
 

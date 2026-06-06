@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, MapPin, Users, Play, Pause } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { cn } from "../lib/cn";
@@ -39,6 +40,7 @@ export function VenuePage() {
 
   return (
     <>
+      <Seo title="Venue & Arena" description="Arena-arena yang menjadi panggung pertandingan PORA Aceh Jaya." />
       <PageHeader
         breadcrumb="Venue"
         eyebrow="Lokasi Pertandingan"

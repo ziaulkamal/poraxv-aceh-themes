@@ -3,3 +3,4 @@ export * from "./sports";
 export * from "./media";
 export * from "./resolvers";
 export * from "./realtime";
+export * from "./menus";

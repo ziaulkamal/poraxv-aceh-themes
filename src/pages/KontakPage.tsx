@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useKirimKontak } from "../lib/api/hooks";
 
@@ -35,6 +36,7 @@ export function KontakPage() {
 
   return (
     <>
+      <Seo title="Kontak" description="Hubungi Sekretariat Panitia PORA Aceh Jaya untuk pertanyaan seputar event." />
       <PageHeader
         breadcrumb="Kontak"
         eyebrow="Hubungi Kami"

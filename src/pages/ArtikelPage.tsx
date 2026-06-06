@@ -4,7 +4,9 @@ import { Container } from "../components/ui/Container";
 import { Badge } from "../components/ui/Badge";
 import { ArtikelCard } from "../components/sections/ArtikelCard";
 import { KomentarSection } from "../components/sections/KomentarSection";
-import { useArtikel, useArtikelCards } from "../lib/api/hooks";
+import { ShareButtons } from "../components/sections/ShareButtons";
+import { Seo } from "../components/Seo";
+import { useArtikel, useArtikelCards, useSeoConfig } from "../lib/api/hooks";
 import { NO_IMAGE } from "../lib/noImage";
 
 /** Laman detail satu artikel berita, lengkap dgn meta & artikel terkait. */
@@ -12,6 +14,7 @@ export function ArtikelPage() {
   const { slug } = useParams();
   const { data: live, isLoading } = useArtikel(slug ?? "");
   const semua = useArtikelCards();
+  const cfg = useSeoConfig();
   const artikel = live ?? semua.find((a) => a.slug === slug);
 
   if (!artikel) {
@@ -34,8 +37,33 @@ export function ArtikelPage() {
 
   const terkait = semua.filter((a) => a.slug !== artikel.slug).slice(0, 3);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: artikel.judul,
+    description: artikel.ringkasan,
+    image: artikel.image ? [artikel.image] : undefined,
+    articleSection: artikel.kategori,
+    author: { "@type": "Person", name: artikel.penulis },
+    publisher: {
+      "@type": "Organization",
+      name: cfg.siteName,
+      ...(cfg.defaultImage && {
+        logo: { "@type": "ImageObject", url: cfg.defaultImage },
+      }),
+    },
+    mainEntityOfPage: typeof window !== "undefined" ? window.location.href : undefined,
+  };
+
   return (
     <article className="bg-surface dark:bg-page-bg">
+      <Seo
+        title={artikel.judul}
+        description={artikel.ringkasan}
+        image={artikel.image || undefined}
+        type="article"
+        jsonLd={jsonLd}
+      />
       {/* Hero artikel */}
       <header className="relative isolate overflow-hidden bg-surface-dark pt-28 text-white sm:pt-32">
         {/* Hero latar; tanpa gambar/URL rusak → pakai no-image.png. */}
@@ -75,6 +103,11 @@ export function ArtikelPage() {
       <Container className="py-12 sm:py-16">
         <div className="mx-auto max-w-3xl">
           <p className="text-lg font-medium leading-relaxed text-ink">{artikel.ringkasan}</p>
+
+          <div className="mt-6 border-y border-ink/10 py-4">
+            <ShareButtons title={artikel.judul} />
+          </div>
+
           <div className="mt-8 space-y-6">
             {artikel.isi.map((blok, i) => {
               if (blok.tipe === "subjudul") {

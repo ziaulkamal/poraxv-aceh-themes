@@ -1,4 +1,5 @@
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { BlokKonten } from "../components/ui/BlokKonten";
 import { usePage } from "../lib/api/hooks";
@@ -29,6 +30,7 @@ export function KebijakanCookiePage() {
   const { data: blok } = usePage("kebijakan-cookie");
   return (
     <>
+      <Seo title="Kebijakan Cookie" description="Penjelasan penggunaan cookie di situs resmi PORA Aceh Jaya." />
       <PageHeader
         breadcrumb="Kebijakan Cookie"
         eyebrow="Legal"

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { X, ChevronLeft, ChevronRight, Heart, MessageCircle, Grid3x3, LayoutGrid } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { cn } from "../lib/cn";
 import type { Foto } from "../data/pages";
@@ -90,6 +91,7 @@ export function GaleriPage() {
 
   return (
     <>
+      <Seo title="Galeri Foto" description="Dokumentasi momen-momen terbaik PORA Aceh Jaya." />
       <PageHeader
         breadcrumb="Galeri"
         eyebrow="Dokumentasi"

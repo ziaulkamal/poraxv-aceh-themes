@@ -6,6 +6,8 @@ import type { Berita, EventInfo } from "../../../types";
 import type { Artikel, Foto, Komentar, LiveChannel } from "../../../data/pages";
 import { formatTanggalPanjang, formatWaktuRelatif } from "../../datetime";
 import type {
+  Branding,
+  SocialLink,
   RawArticle,
   RawComment,
   RawContentBlock,
@@ -18,6 +20,50 @@ import type {
 } from "../types";
 
 const str = (v: unknown): string => (v == null ? "" : String(v));
+const num = (v: unknown, d: number): number => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : d;
+};
+const bool = (v: unknown, d: boolean): boolean =>
+  typeof v === "boolean" ? v : v === "true" ? true : v === "false" ? false : d;
+
+/** Map setting publik → branding/footer (logo, favicon, slogan, layout). */
+export function settingsToBranding(map: RawSettingsMap): Branding {
+  const raw = map.footer_layout;
+  const L = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  return {
+    slogan: str(map.site_slogan),
+    logoMainLight: str(map.logo_main_light),
+    logoMainDark: str(map.logo_main_dark),
+    logoFooterLight: str(map.logo_footer_light),
+    logoFooterDark: str(map.logo_footer_dark),
+    favicon: str(map.favicon),
+    footerDescription: str(map.footer_description),
+    secretariatTitle: str(map.footer_secretariat_title),
+    contactAddress: str(map.contact_address),
+    contactPhone: str(map.contact_phone),
+    contactEmail: str(map.contact_email),
+    footerLayout: {
+      preset: str(L.preset) || "balanced",
+      gap: str(L.gap) || "md",
+      identityWeight: num(L.identityWeight, 1.5),
+      navWeight: num(L.navWeight, 1),
+      contactWeight: num(L.contactWeight, 1.3),
+      showIdentity: bool(L.showIdentity, true),
+      showContact: bool(L.showContact, true),
+      gridTemplate: str(L.gridTemplate),
+    },
+    socials: Array.isArray(map.social_links)
+      ? (map.social_links as unknown[])
+          .map((r) => {
+            const o = (r && typeof r === "object" ? r : {}) as Record<string, unknown>;
+            return { platform: str(o.platform), url: str(o.url), enabled: bool(o.enabled, true) };
+          })
+          .filter((s): s is SocialLink => !!s.platform && !!s.url && s.enabled)
+      : [],
+    socialPlacement: str(map.footer_social_placement) || "secretariat",
+  };
+}
 
 /** Map setting publik → identitas event (Hero/Footer/Countdown). */
 export function settingsToEvent(map: RawSettingsMap): EventInfo {

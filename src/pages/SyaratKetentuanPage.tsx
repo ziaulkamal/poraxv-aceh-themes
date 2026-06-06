@@ -1,4 +1,5 @@
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { BlokKonten } from "../components/ui/BlokKonten";
 import { usePage } from "../lib/api/hooks";
@@ -43,6 +44,7 @@ export function SyaratKetentuanPage() {
   const { data: blok } = usePage("syarat-ketentuan");
   return (
     <>
+      <Seo title="Syarat & Ketentuan" description="Ketentuan penggunaan situs resmi PORA Aceh Jaya." />
       <PageHeader
         breadcrumb="Syarat & Ketentuan"
         eyebrow="Legal"

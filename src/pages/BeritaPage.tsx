@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Reveal } from "../components/ui/Reveal";
 import { SelectFilter } from "../components/ui/SelectFilter";
@@ -29,6 +30,7 @@ export function BeritaPage() {
 
   return (
     <>
+      <Seo title="Berita" description="Liputan, kabar, dan informasi resmi seputar gelaran PORA XV di Kabupaten Aceh Jaya." />
       <PageHeader
         breadcrumb="Berita"
         eyebrow="Kabar Terbaru"

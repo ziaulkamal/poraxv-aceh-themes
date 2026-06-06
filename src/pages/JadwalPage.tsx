@@ -5,6 +5,7 @@
 import { useMemo } from "react";
 import { Clock, MapPin } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Badge } from "../components/ui/Badge";
 import { KontingenIcons } from "../components/ui/KontingenIcons";
@@ -53,6 +54,7 @@ export function JadwalPage() {
 
   return (
     <>
+      <Seo title="Jadwal Pertandingan" description="Seluruh agenda pertandingan PORA Aceh Jaya, dikelompokkan menurut tanggal." />
       <PageHeader
         breadcrumb="Jadwal"
         eyebrow="Agenda Pertandingan"

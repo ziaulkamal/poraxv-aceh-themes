@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Eye, MapPin, Medal, Play, Radio, Star, Trophy } from "lucide-react";
+import { Seo } from "../components/Seo";
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
 import { LiveStreaming, StreamModal } from "../components/sections/LiveStreaming";
@@ -367,6 +368,7 @@ export function LivePage() {
 
   return (
     <>
+      <Seo title="Live Skor" description="Skor langsung dan jadwal pertandingan PORA Aceh Jaya yang sedang berlangsung." />
       <PageHeader breadcrumb="Live Skor" eyebrow="Pusat Pertandingan" title="Live Skor">
         <p className="mt-4 inline-flex items-center gap-2 rounded-pill bg-merah/20 px-4 py-2 text-sm font-semibold text-white">
           <Radio className="size-4" /> {jumlahLive} pertandingan sedang berlangsung

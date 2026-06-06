@@ -227,3 +227,72 @@ export interface RawVenueContent {
   galleryVisible?: boolean; // bila false → galeri disembunyikan di WEB
   updatedAt?: string;
 }
+
+/* ============================ cms-media (menu WEB) ============================ */
+
+/** Lokasi menu di WEB. */
+export type MenuLocation = "MAIN" | "FOOTER" | "FOOTER_BOTTOM";
+
+/** Jenis tautan item menu. */
+export type MenuLinkType = "ANCHOR" | "ROUTE" | "EXTERNAL";
+
+/** Node menu berjenjang (`GET /menus`). url null = judul kolom footer. */
+export interface MenuNode {
+  id: string;
+  location: MenuLocation;
+  parentId: string | null;
+  label: string;
+  type: MenuLinkType;
+  url: string | null;
+  openInNewTab: boolean;
+  position: number;
+  isVisible: boolean;
+  children: MenuNode[];
+}
+
+/** Payload menu publik tergrup per lokasi. */
+export interface MenusPayload {
+  main: MenuNode[];
+  footer: MenuNode[];
+  footerBottom: MenuNode[];
+}
+
+/* ============================ cms-media (branding/footer) ============================ */
+
+/** Konfigurasi layout kolom footer (dari setting JSON `footer_layout`). */
+export interface FooterLayout {
+  preset: string;
+  gap: string; // sm | md | lg | xl
+  identityWeight: number;
+  navWeight: number;
+  contactWeight: number;
+  showIdentity: boolean;
+  showContact: boolean;
+  gridTemplate: string; // override mentah; kosong = dihitung dari bobot
+}
+
+/** Identitas/branding situs yang dikelola via CMS (Tampilan Situs). */
+export interface Branding {
+  slogan: string;
+  logoMainLight: string;
+  logoMainDark: string;
+  logoFooterLight: string;
+  logoFooterDark: string;
+  favicon: string;
+  footerDescription: string;
+  secretariatTitle: string;
+  contactAddress: string;
+  contactPhone: string;
+  contactEmail: string;
+  footerLayout: FooterLayout;
+  socials: SocialLink[];
+  /** identity | secretariat | column-N | bottom | hidden */
+  socialPlacement: string;
+}
+
+/** Satu tautan sosial media (platform + URL + aktif). */
+export interface SocialLink {
+  platform: string;
+  url: string;
+  enabled: boolean;
+}

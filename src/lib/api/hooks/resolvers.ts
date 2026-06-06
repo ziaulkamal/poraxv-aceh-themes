@@ -24,7 +24,9 @@ import {
   pertandinganList as staticPertandingan,
   streamingAktif as staticStreamingAktif,
 } from "../../../data/pages";
-import { SOCIAL_KEYS, settingsToSocialHref } from "../adapters/media";
+import { SOCIAL_KEYS, settingsToBranding, settingsToSocialHref } from "../adapters/media";
+import type { Branding } from "../types";
+import brandLogo from "../../../assets/brand/logo.png";
 import {
   useArtikelList,
   useBerita,
@@ -41,6 +43,45 @@ import { useCabor, useJadwal, useKlasemen, useLiveSkor, useVenue } from "./sport
 export function useEventInfo(): EventInfo {
   const { data } = useEvent();
   return data?.edisi ? data : staticEvent;
+}
+
+/** Branding situs (logo/favicon/slogan/footer) — CMS dgn fallback bawaan. */
+export function useBranding(): Branding {
+  const { data } = useSettings();
+  const event = useEventInfo();
+  const b = settingsToBranding(data ?? {});
+  return {
+    ...b,
+    slogan: b.slogan || event.tagline,
+    footerDescription:
+      b.footerDescription || `${event.namaPanjang} — Tuan Rumah ${event.tuanRumah}.`,
+    logoMainLight: b.logoMainLight || brandLogo,
+    logoMainDark: b.logoMainDark || brandLogo,
+    logoFooterLight: b.logoFooterLight || brandLogo,
+    logoFooterDark: b.logoFooterDark || brandLogo,
+  };
+}
+
+/** Konfigurasi SEO turunan (nama situs, base URL, gambar share default, handle X). */
+export interface SeoConfig {
+  siteName: string;
+  baseUrl: string;
+  defaultImage: string;
+  twitterHandle: string;
+}
+
+export function useSeoConfig(): SeoConfig {
+  const { data } = useSettings();
+  const branding = useBranding();
+  const event = useEventInfo();
+  const map = data ?? {};
+  const s = (v: unknown): string => (typeof v === "string" ? v : "");
+  const baseUrl = (s(map.frontend_url) || (typeof window !== "undefined" ? window.location.origin : "")).replace(/\/+$/, "");
+  const siteName = s(map.site_title) || event.namaPanjang || "PORA Aceh Jaya";
+  const defaultImage = s(map.og_default_image) || branding.logoMainLight || "";
+  const x = branding.socials.find((l) => l.platform === "x" || l.platform === "twitter");
+  const twitterHandle = x?.url ? "@" + x.url.replace(/\/+$/, "").split("/").pop() : "";
+  return { siteName, baseUrl, defaultImage, twitterHandle };
 }
 
 /** Kanal sosial: ikon/brand statis dgn href ditimpa setting cms bila tersedia. */

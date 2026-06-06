@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Seo } from "../components/Seo";
 import {
   Home, Info, Dumbbell, CalendarDays, Users,
   Newspaper, Medal, Radio, MapPin, Image,
@@ -60,6 +61,7 @@ const jumlahTautan = grup.reduce((n, g) => n + g.tautan.length, 0);
 export function SitemapPage() {
   return (
     <>
+      <Seo title="Peta Situs" description="Semua halaman dan bagian situs PORA Aceh Jaya dalam satu indeks ringkas." />
       <PageHeader
         breadcrumb="Peta Situs"
         eyebrow="Navigasi"

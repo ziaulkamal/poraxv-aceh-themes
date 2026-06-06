@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search, Medal, ArrowUpDown } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { cn } from "../lib/cn";
 import { useEventInfo, useKlasemenList } from "../lib/api/hooks";
@@ -52,6 +53,7 @@ export function KlasemenPage() {
 
   return (
     <>
+      <Seo title="Klasemen Medali" description="Rekap perolehan medali seluruh kontingen kabupaten/kota se-Aceh di PORA Aceh Jaya." />
       <PageHeader
         breadcrumb="Klasemen"
         eyebrow="Perolehan Medali"

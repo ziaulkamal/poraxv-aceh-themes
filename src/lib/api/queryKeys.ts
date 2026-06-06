@@ -3,6 +3,7 @@
 /** Factory kunci query; konsisten agar invalidasi dari socket tepat sasaran. */
 export const qk = {
   settings: ["settings"] as const,
+  menus: ["menus"] as const,
   page: (slug: string) => ["page", slug] as const,
   berita: (params?: Record<string, unknown>) => ["berita", params ?? {}] as const,
   artikelList: (params?: Record<string, unknown>) => ["artikel-list", params ?? {}] as const,
