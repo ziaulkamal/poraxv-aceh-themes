@@ -38,12 +38,15 @@ export function ArtikelPage() {
 
   const terkait = semua.filter((a) => a.slug !== artikel.slug).slice(0, 3);
 
+  // og:image = gambar utama artikel; bila tak ada → no-image bawaan (URL absolut).
+  const ogImage = artikel.image || `${cfg.baseUrl}/no-image.png`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     headline: artikel.judul,
     description: artikel.ringkasan,
-    image: artikel.image ? [artikel.image] : undefined,
+    image: [ogImage],
     articleSection: artikel.kategori,
     author: { "@type": "Person", name: artikel.penulis },
     publisher: {
@@ -61,7 +64,7 @@ export function ArtikelPage() {
       <Seo
         title={artikel.judul}
         description={artikel.ringkasan}
-        image={artikel.image || undefined}
+        image={ogImage}
         type="article"
         jsonLd={jsonLd}
       />
