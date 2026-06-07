@@ -7,6 +7,7 @@ import { KomentarSection } from "../components/sections/KomentarSection";
 import { ShareButtons } from "../components/sections/ShareButtons";
 import { Seo } from "../components/Seo";
 import { useArtikel, useArtikelCards, useSeoConfig } from "../lib/api/hooks";
+import { API_CONFIG } from "../lib/api/config";
 import { NO_IMAGE } from "../lib/noImage";
 
 /** Laman detail satu artikel berita, lengkap dgn meta & artikel terkait. */
@@ -105,7 +106,10 @@ export function ArtikelPage() {
           <p className="text-lg font-medium leading-relaxed text-ink">{artikel.ringkasan}</p>
 
           <div className="mt-6 border-y border-ink/10 py-4">
-            <ShareButtons title={artikel.judul} />
+            <ShareButtons
+              title={artikel.judul}
+              url={`${API_CONFIG.cmsUrl.replace(/\/api\/v\d+$/, "")}/share/berita/${artikel.slug}`}
+            />
           </div>
 
           <div className="mt-8 space-y-6">

@@ -31,10 +31,12 @@ function shareHref(platform: string, url: string, text: string): string {
   }
 }
 
-/** Tombol berbagi artikel ke sosial media + salin tautan. */
-export function ShareButtons({ title }: { title: string }) {
+/** Tombol berbagi artikel ke sosial media + salin tautan.
+ *  `url` opsional: pakai URL "jembatan" share CMS agar preview OG muncul di sosmed
+ *  (SPA/HashRouter tak bisa menyajikan OG per-artikel ke crawler). */
+export function ShareButtons({ title, url: urlProp }: { title: string; url?: string }) {
   const [copied, setCopied] = useState(false);
-  const url = typeof window !== "undefined" ? window.location.href : "";
+  const url = urlProp || (typeof window !== "undefined" ? window.location.href : "");
 
   const copy = async () => {
     try {
