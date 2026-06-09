@@ -41,7 +41,7 @@ export interface RawVenue {
   is_active: boolean;
   sport_categories_count?: number;
   wilayah?: RawWilayah | null;
-  sportCategories?: RawSportCategory[];
+  sport_categories?: RawSportCategory[];
 }
 
 export interface RawContingent {
@@ -80,7 +80,7 @@ export interface RawMatch {
   duration_minutes: number | null;
   status: RawMatchStatus;
   notes: string | null;
-  sportCategory?: RawSportCategory;
+  sport_category?: RawSportCategory;
   venue?: Pick<RawVenue, "id" | "name" | "address">;
   participants?: RawMatchParticipant[];
 }

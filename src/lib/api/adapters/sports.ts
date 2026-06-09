@@ -27,7 +27,7 @@ export function toCabor(raw: RawSport): Cabor {
 
 /** Venue core → Venue FE. `image` di-enrich dari cms VenueContent saat wiring. */
 export function toVenue(raw: RawVenue): Venue {
-  const cabor = raw.sportCategories?.map((c) => c.sport?.name ?? c.name) ?? [];
+  const cabor = raw.sport_categories?.map((c) => c.sport?.name ?? c.name) ?? [];
   return {
     nama: raw.name,
     lokasi: raw.address ?? raw.wilayah?.nama ?? "",
@@ -49,12 +49,12 @@ function toKontingenIcons(participants: RawMatch["participants"]): JadwalItem["k
 
 /** Pertandingan → satu baris JadwalItem (waktu literal wall-clock). */
 export function toJadwalItem(raw: RawMatch): JadwalItem {
-  const cabor = raw.sportCategory?.sport?.name ?? raw.sportCategory?.name ?? "";
+  const cabor = raw.sport_category?.sport?.name ?? raw.sport_category?.name ?? "";
   return {
     tanggal: formatTanggalSingkat(raw.scheduled_at),
     waktu: formatJam(raw.scheduled_at),
     cabor,
-    acara: raw.round ?? raw.sportCategory?.name ?? raw.match_code,
+    acara: raw.round ?? raw.sport_category?.name ?? raw.match_code,
     venue: raw.venue?.name ?? "",
     status: toStatus(raw.status),
     kode: raw.match_code,
@@ -108,13 +108,13 @@ function toSets(data: RawResultData | undefined): Array<[number, number]> | unde
 
 /** Pertandingan (+ hasil opsional) → kartu Pertandingan FE. */
 export function toPertandingan(raw: RawMatch, result?: RawResultData): Pertandingan {
-  const ptype = raw.sportCategory?.participant_type ?? "";
+  const ptype = raw.sport_category?.participant_type ?? "";
   const jenis: Pertandingan["jenis"] = /individu|tunggal|single/i.test(ptype) ? "tunggal" : "tim";
   return {
     id: String(raw.id),
     jenis,
-    cabor: raw.sportCategory?.sport?.name ?? raw.sportCategory?.name ?? "",
-    babak: raw.round ?? raw.sportCategory?.name ?? "",
+    cabor: raw.sport_category?.sport?.name ?? raw.sport_category?.name ?? "",
+    babak: raw.round ?? raw.sport_category?.name ?? "",
     status: toStatus(raw.status),
     klok: toKlok(raw),
     venue: raw.venue?.name ?? "",
