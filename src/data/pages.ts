@@ -273,6 +273,10 @@ export interface Peserta {
   nama: string;
   kontingen: string;
   logo?: string; // lambang kontingen (dari wilayah_kode); FE tampilkan ikon, bukan nama
+  /** Nilai hasil cabor berbasis peringkat (waktu/jarak/poin), mis. "04:58.29" — bukan skor head-to-head. */
+  hasil?: string;
+  /** Peringkat akhir (1 = juara) untuk cabor berbasis peringkat/lawan-waktu. */
+  peringkat?: number;
 }
 
 export interface Pertandingan {
@@ -290,6 +294,11 @@ export interface Pertandingan {
   skorB: number;
   /** Khusus tunggal: rincian skor tiap set/game [a, b]. */
   set?: [number, number][];
+  /**
+   * True bila hasil berbasis peringkat (scoring time/distance/rank): tak ada skor
+   * head-to-head — UI menampilkan daftar peringkat + nilai hasil per peserta, bukan skorA:skorB.
+   */
+  berbasisPeringkat?: boolean;
   /** Semua peserta. >2 = basis multi-kontingen (ikon saja, nilai disembunyikan). */
   peserta?: Peserta[];
 }

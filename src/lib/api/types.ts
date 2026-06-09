@@ -94,7 +94,7 @@ export interface RawMatchResult {
   notes: string | null;
 }
 
-/** result_data: {home,away,sets?} | {result} | {score} | {rank} — semua opsional. */
+/** result_data: {home,away,sets?} | {ranks[]} | {score} — bentuk per scoring_type, semua opsional. */
 export interface RawResultData {
   home?: number;
   away?: number;
@@ -102,6 +102,8 @@ export interface RawResultData {
   result?: string | number;
   score?: number;
   rank?: number;
+  /** Hasil berbasis peringkat (time/distance/rank): satu baris per kontingen, terurut peringkat. */
+  ranks?: Array<{ rank: number; result: string | number; contingent_id: number }>;
   winner_side?: "home" | "away";
   [key: string]: unknown;
 }

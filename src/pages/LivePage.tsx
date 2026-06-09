@@ -105,7 +105,7 @@ function SorotanCard({
   match?: Pertandingan;
   onTonton: () => void;
 }) {
-  const multi = (match?.peserta?.length ?? 2) > 2;
+  const multi = (match?.peserta?.length ?? 2) > 2 || !!match?.berbasisPeringkat;
   const live = match ? match.status === "live" : true;
   return (
     <button
@@ -169,6 +169,51 @@ function SorotanCard({
   );
 }
 
+/** Warna peringkat: 1 emas, 2 perak (soft), 3 perunggu (merah), sisanya muted. */
+function warnaPeringkat(r?: number): string {
+  if (r === 1) return "text-emas";
+  if (r === 2) return "text-ink-soft";
+  if (r === 3) return "text-merah";
+  return "text-ink-muted";
+}
+
+/**
+ * Daftar hasil berbasis peringkat (cabor lawan-waktu/jarak: atletik, renang, dll):
+ * peringkat + lambang kontingen + nilai hasil (waktu/jarak). Menggantikan skorA:skorB.
+ */
+function PeringkatList({ peserta }: { peserta: Peserta[] }) {
+  return (
+    <ol className="mt-5 flex flex-col gap-1.5">
+      {peserta.map((p, i) => {
+        const logo = p.logo || logoFor(p.kontingen);
+        return (
+          <li
+            key={i}
+            className="flex items-center gap-3 rounded-md bg-surface-soft px-3 py-1.5 dark:bg-white/5"
+          >
+            <span className={cn("w-5 shrink-0 text-center font-display text-base font-bold tabular-nums", warnaPeringkat(p.peringkat))}>
+              {p.peringkat ?? "–"}
+            </span>
+            <span
+              title={p.kontingen}
+              className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface ring-1 ring-ink/10"
+            >
+              {logo ? (
+                <img src={logo} alt={p.kontingen} className="size-6 object-contain" />
+              ) : (
+                <Trophy className="size-3.5 text-ink-muted" />
+              )}
+            </span>
+            <span className="ml-auto font-display text-sm font-semibold tabular-nums text-ink">
+              {p.hasil || "—"}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 /** Kartu skor satu pertandingan (beregu maupun perorangan). */
 function MatchCard({ m, onTonton }: { m: Pertandingan; onTonton?: () => void }) {
   // >2 peserta = basis multi-kontingen: ikon saja, area nilai disembunyikan.
@@ -197,7 +242,10 @@ function MatchCard({ m, onTonton }: { m: Pertandingan; onTonton?: () => void }) 
         </div>
       </div>
 
-      {multi ? (
+      {m.berbasisPeringkat ? (
+        /* Cabor berbasis peringkat (waktu/jarak): daftar peringkat + nilai hasil. */
+        <PeringkatList peserta={m.peserta ?? []} />
+      ) : multi ? (
         /* Basis multi-kontingen: deret ikon kontingen, tanpa area nilai. */
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
           {m.peserta!.map((p, i) => (

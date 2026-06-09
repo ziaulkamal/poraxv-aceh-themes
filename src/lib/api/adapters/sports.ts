@@ -110,6 +110,25 @@ function toSets(data: RawResultData | undefined): Array<[number, number]> | unde
 export function toPertandingan(raw: RawMatch, result?: RawResultData): Pertandingan {
   const ptype = raw.sport_category?.participant_type ?? "";
   const jenis: Pertandingan["jenis"] = /individu|tunggal|single/i.test(ptype) ? "tunggal" : "tim";
+
+  // Hasil berbasis peringkat (scoring time/distance/rank): result_data punya `ranks[]`
+  // (bukan skor head-to-head home/away). Petakan peringkat+nilai hasil per kontingen.
+  const ranks = Array.isArray(result?.ranks) ? result.ranks : undefined;
+  const berbasisPeringkat = !!ranks && ranks.length > 0;
+  const hasilByKontingen = new Map(
+    (ranks ?? []).map((r) => [r.contingent_id, { peringkat: r.rank, hasil: String(r.result ?? "") }]),
+  );
+
+  const peserta = (raw.participants ?? []).map((p) => {
+    const base = toPeserta(p);
+    const info = p ? hasilByKontingen.get(p.contingent_id) : undefined;
+    return info ? { ...base, ...info } : base;
+  });
+  // Urutkan peserta menurut peringkat (yang tanpa peringkat di belakang) agar daftar runut.
+  if (berbasisPeringkat) {
+    peserta.sort((x, y) => (x.peringkat ?? 99) - (y.peringkat ?? 99));
+  }
+
   return {
     id: String(raw.id),
     jenis,
@@ -118,11 +137,12 @@ export function toPertandingan(raw: RawMatch, result?: RawResultData): Pertandin
     status: toStatus(raw.status),
     klok: toKlok(raw),
     venue: raw.venue?.name ?? "",
-    a: toPeserta(raw.participants?.[0]),
-    b: toPeserta(raw.participants?.[1]),
+    a: peserta[0] ?? toPeserta(undefined),
+    b: peserta[1] ?? toPeserta(undefined),
     skorA: Number(result?.home ?? 0),
     skorB: Number(result?.away ?? 0),
     set: toSets(result),
-    peserta: (raw.participants ?? []).map(toPeserta),
+    berbasisPeringkat,
+    peserta,
   };
 }
