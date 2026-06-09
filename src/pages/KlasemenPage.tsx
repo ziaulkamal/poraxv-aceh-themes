@@ -4,7 +4,7 @@ import { Container } from "../components/ui/Container";
 import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { cn } from "../lib/cn";
-import { useEventInfo, useKlasemenList } from "../lib/api/hooks";
+import { useKlasemenList } from "../lib/api/hooks";
 
 type SortKey = "peringkat" | "emas" | "perak" | "perunggu" | "total";
 
@@ -17,8 +17,6 @@ const kolom = [
 /** Laman klasemen lengkap: podium tiga besar + tabel medali sortir & cari. */
 export function KlasemenPage() {
   const klasemenList = useKlasemenList();
-  const event = useEventInfo();
-  const host = event.tuanRumah.split(" ").pop() ?? "";
   const [cari, setCari] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("peringkat");
   const [asc, setAsc] = useState(true);
@@ -134,7 +132,7 @@ export function KlasemenPage() {
               </thead>
               <tbody>
                 {baris.map((row) => {
-                  const isHost = row.kontingen.includes(host);
+                  const isHost = !!row.tuanRumah;
                   return (
                     <tr
                       key={row.kontingen}

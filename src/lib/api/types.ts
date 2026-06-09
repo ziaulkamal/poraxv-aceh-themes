@@ -115,6 +115,8 @@ export interface RawLeaderboardRow {
   contingent_name: string;
   short_name: string | null;
   wilayah_kode: string | null;
+  /** Penanda kontingen tuan rumah event (dari contingents.is_host). */
+  is_host?: boolean;
   gold: number;
   silver: number;
   bronze: number;

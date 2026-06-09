@@ -70,6 +70,7 @@ export function toMedaliKontingen(raw: RawLeaderboardRow): MedaliKontingen {
     emas: raw.gold,
     perak: raw.silver,
     perunggu: raw.bronze,
+    tuanRumah: !!raw.is_host,
   };
 }
 

@@ -47,6 +47,8 @@ export interface MedaliKontingen {
   emas: number;
   perak: number;
   perunggu: number;
+  /** True bila kontingen ini tuan rumah event (dari CORE contingents.is_host). */
+  tuanRumah?: boolean;
 }
 
 /** Satu kartu berita/kabar terbaru. */

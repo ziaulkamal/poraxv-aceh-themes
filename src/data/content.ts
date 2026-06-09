@@ -201,7 +201,7 @@ export const jadwalList: JadwalItem[] = [
 export const klasemenList: MedaliKontingen[] = [
   { peringkat: 1, kontingen: "Kota Banda Aceh", emas: 42, perak: 31, perunggu: 28 },
   { peringkat: 2, kontingen: "Kabupaten Aceh Besar", emas: 35, perak: 29, perunggu: 33 },
-  { peringkat: 3, kontingen: "Kabupaten Aceh Jaya", emas: 28, perak: 22, perunggu: 19 },
+  { peringkat: 3, kontingen: "Kabupaten Aceh Jaya", emas: 28, perak: 22, perunggu: 19, tuanRumah: true },
   { peringkat: 4, kontingen: "Kota Lhokseumawe", emas: 24, perak: 26, perunggu: 21 },
   { peringkat: 5, kontingen: "Kabupaten Pidie", emas: 21, perak: 18, perunggu: 25 },
   { peringkat: 6, kontingen: "Kabupaten Bireuen", emas: 19, perak: 23, perunggu: 20 },
