@@ -14,8 +14,17 @@ export interface Artikel {
   durasiBaca: string;
   image: string;
   ringkasan: string;
-  /** Isi artikel sebagai blok paragraf; blok "kutipan" dirender khusus. */
-  isi: { tipe: "paragraf" | "subjudul" | "kutipan"; teks: string }[];
+  /** Isi artikel sebagai blok paragraf; blok "kutipan" dirender khusus.
+   *  `level` = tingkat heading (1..6) untuk "subjudul"; `anak` = segmen inline
+   *  dgn `href` bila ada tautan anchor di dalam teks. */
+  isi: {
+    tipe: "paragraf" | "subjudul" | "kutipan";
+    teks: string;
+    level?: number;
+    anak?: { teks: string; href?: string }[];
+  }[];
+  /** Tag/label artikel dari CMS; ditampilkan di akhir tulisan bila ada. */
+  tag?: string[];
 }
 
 const unsplash = (id: string, w = 1200) =>

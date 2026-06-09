@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { MessageCircle, Heart, CornerDownRight, Send, X } from "lucide-react";
 import { cn } from "../../lib/cn";
+import { LogoAvatar } from "../ui/LogoAvatar";
 import { komentarList, type Komentar } from "../../data/pages";
 import { useKirimKomentar, useKomentar, useSukaKomentar } from "../../lib/api/hooks";
 
@@ -165,14 +166,19 @@ function KomentarItem({
   return (
     <li>
       <div className="flex gap-3">
-        <span
-          className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white shadow-sm",
-            gradienDari(komentar.nama),
-          )}
-        >
-          {inisial(komentar.nama)}
-        </span>
+        {/* Avatar: balasan admin/panitia memakai logo situs WEB; pengguna biasa pakai inisial. */}
+        {isAdmin ? (
+          <LogoAvatar className="size-10 shadow-sm" />
+        ) : (
+          <span
+            className={cn(
+              "flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white shadow-sm",
+              gradienDari(komentar.nama),
+            )}
+          >
+            {inisial(komentar.nama)}
+          </span>
+        )}
 
         <div className="min-w-0 flex-1">
           <div className="rounded-2xl rounded-tl-sm bg-surface-soft px-4 py-3 dark:bg-white/[0.04]">

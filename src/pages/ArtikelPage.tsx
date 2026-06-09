@@ -1,6 +1,10 @@
+import { Fragment } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock, User, ChevronRight } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, ChevronRight, Tag, List } from "lucide-react";
 import { Container } from "../components/ui/Container";
+import { LogoAvatar } from "../components/ui/LogoAvatar";
+import { TeksKaya } from "../components/ui/TeksKaya";
+import { slugAnchor } from "../lib/tautan";
 import { Badge } from "../components/ui/Badge";
 import { ArtikelCard } from "../components/sections/ArtikelCard";
 import { KomentarSection } from "../components/sections/KomentarSection";
@@ -38,6 +42,24 @@ export function ArtikelPage() {
 
   const terkait = semua.filter((a) => a.slug !== artikel.slug).slice(0, 3);
 
+  // Beri id anchor unik ke tiap heading (subjudul) utk daftar isi & deep-link.
+  const idTerpakai = new Set<string>();
+  const isiAnchor = artikel.isi.map((blok) => {
+    if (blok.tipe !== "subjudul") return { blok, id: undefined as string | undefined };
+    const dasar = slugAnchor(blok.teks);
+    let id = dasar;
+    for (let n = 2; idTerpakai.has(id); n++) id = `${dasar}-${n}`;
+    idTerpakai.add(id);
+    return { blok, id };
+  });
+  // Daftar isi otomatis hanya bila tersusun ≥3 heading (mis. H1/H2/H3).
+  const headings = isiAnchor.filter((x) => x.id) as { blok: (typeof artikel.isi)[number]; id: string }[];
+  const tampilkanToc = headings.length >= 3;
+  const levelMin = tampilkanToc ? Math.min(...headings.map((h) => h.blok.level ?? 2)) : 2;
+  // Sisipkan ToC tepat setelah paragraf pertama (atau di awal bila tak ada paragraf).
+  const idxParagrafPertama = artikel.isi.findIndex((b) => b.tipe === "paragraf");
+  const idxSisipToc = tampilkanToc ? idxParagrafPertama : -1;
+
   // og:image = gambar utama artikel; bila tak ada → no-image bawaan (URL absolut).
   const ogImage = artikel.image || `${cfg.baseUrl}/no-image.png`;
 
@@ -58,6 +80,35 @@ export function ArtikelPage() {
     },
     mainEntityOfPage: typeof window !== "undefined" ? window.location.href : undefined,
   };
+
+  // Daftar isi (indentasi mengikuti tingkat heading relatif terhadap level terkecil).
+  const tocNav = tampilkanToc ? (
+    <nav
+      aria-label="Daftar isi"
+      className="my-8 rounded-2xl border border-ink/10 bg-surface-soft p-5 dark:bg-white/5"
+    >
+      <p className="flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-ink">
+        <List className="size-4 text-merah" /> Daftar Isi
+      </p>
+      <ol className="mt-3 space-y-1.5 text-sm">
+        {headings.map((h) => (
+          <li key={h.id} style={{ marginLeft: `${((h.blok.level ?? 2) - levelMin) * 16}px` }}>
+            <a
+              href={`#${h.id}`}
+              onClick={(e) => {
+                // HashRouter: cegah navigasi hash (bisa keluar artikel); gulir manual ke heading.
+                e.preventDefault();
+                document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="text-ink-soft transition hover:text-merah"
+            >
+              {h.blok.teks}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  ) : null;
 
   return (
     <article className="bg-surface dark:bg-page-bg">
@@ -95,7 +146,7 @@ export function ArtikelPage() {
               {artikel.judul}
             </h1>
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/65">
-              <span className="inline-flex items-center gap-1.5"><User className="size-4 text-emas" /> {artikel.penulis}</span>
+              <span className="inline-flex items-center gap-2"><LogoAvatar className="size-7" /> {artikel.penulis}</span>
               <span className="inline-flex items-center gap-1.5"><Calendar className="size-4 text-emas" /> {artikel.tanggal}</span>
               <span className="inline-flex items-center gap-1.5"><Clock className="size-4 text-emas" /> {artikel.durasiBaca} baca</span>
             </div>
@@ -108,38 +159,67 @@ export function ArtikelPage() {
         <div className="mx-auto max-w-3xl">
           <p className="text-lg font-medium leading-relaxed text-ink">{artikel.ringkasan}</p>
 
-          <div className="mt-6 border-y border-ink/10 py-4">
+          <div className="mt-8 space-y-6">
+            {/* Tanpa paragraf di awal → daftar isi di atas konten. */}
+            {idxSisipToc === -1 && tocNav}
+            {isiAnchor.map(({ blok, id }, i) => {
+              let elemen;
+              if (blok.tipe === "subjudul") {
+                // Level 1 diturunkan ke H2 (H1 dipakai judul artikel di hero).
+                const lvl = Math.min(Math.max(blok.level ?? 2, 2), 4);
+                const Hx = `h${lvl}` as "h2" | "h3" | "h4";
+                const ukuran =
+                  lvl === 2 ? "text-xl sm:text-2xl" : lvl === 3 ? "text-lg sm:text-xl" : "text-base sm:text-lg";
+                elemen = (
+                  <Hx id={id} className={`scroll-mt-24 font-display font-bold text-ink ${ukuran}`}>
+                    {blok.teks}
+                  </Hx>
+                );
+              } else if (blok.tipe === "kutipan") {
+                elemen = (
+                  <blockquote className="border-l-4 border-merah bg-surface-soft py-4 pl-5 pr-4 font-display text-lg italic text-ink dark:bg-white/5">
+                    “<TeksKaya teks={blok.teks} anak={blok.anak} siteUrl={cfg.baseUrl} />”
+                  </blockquote>
+                );
+              } else {
+                elemen = (
+                  <p className="leading-relaxed text-ink-soft">
+                    <TeksKaya teks={blok.teks} anak={blok.anak} siteUrl={cfg.baseUrl} />
+                  </p>
+                );
+              }
+              return (
+                <Fragment key={i}>
+                  {elemen}
+                  {i === idxSisipToc && tocNav}
+                </Fragment>
+              );
+            })}
+          </div>
+
+          {/* Tag artikel — hanya bila CMS mengirim tag. */}
+          {artikel.tag && artikel.tag.length > 0 && (
+            <div className="mt-10 flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink">
+                <Tag className="size-4 text-merah" /> Tag
+              </span>
+              {artikel.tag.map((t) => (
+                <span
+                  key={t}
+                  className="inline-flex items-center rounded-full border border-ink/10 bg-surface-soft px-3 py-1 text-xs font-medium text-ink-soft dark:bg-white/5"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Bagikan ke sosial media — di akhir tulisan artikel. */}
+          <div className="mt-8 border-y border-ink/10 py-4">
             <ShareButtons
               title={artikel.judul}
               url={`${API_CONFIG.cmsUrl.replace(/\/api\/v\d+$/, "")}/share/berita/${artikel.slug}`}
             />
-          </div>
-
-          <div className="mt-8 space-y-6">
-            {artikel.isi.map((blok, i) => {
-              if (blok.tipe === "subjudul") {
-                return (
-                  <h2 key={i} className="font-display text-xl font-bold text-ink sm:text-2xl">
-                    {blok.teks}
-                  </h2>
-                );
-              }
-              if (blok.tipe === "kutipan") {
-                return (
-                  <blockquote
-                    key={i}
-                    className="border-l-4 border-merah bg-surface-soft py-4 pl-5 pr-4 font-display text-lg italic text-ink dark:bg-white/5"
-                  >
-                    “{blok.teks}”
-                  </blockquote>
-                );
-              }
-              return (
-                <p key={i} className="leading-relaxed text-ink-soft">
-                  {blok.teks}
-                </p>
-              );
-            })}
           </div>
 
           <div className="mt-12 border-t border-ink/10 pt-6">

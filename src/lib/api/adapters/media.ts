@@ -12,6 +12,7 @@ import type {
   RawComment,
   RawContentBlock,
   RawContentBody,
+  RawInlineNode,
   RawGalleryPhoto,
   RawLiveStream,
   RawPage,
@@ -99,24 +100,52 @@ const TIPTAP_TIPE: Record<string, RawContentBlock["tipe"]> = {
   blockquote: "kutipan",
 };
 
-/** Rangkai teks dari leaf node TipTap secara rekursif. */
-function extractTeks(node: unknown): string {
-  if (!node || typeof node !== "object") return "";
-  const n = node as { text?: unknown; content?: unknown };
-  if (typeof n.text === "string") return n.text;
-  if (Array.isArray(n.content)) return n.content.map(extractTeks).join("");
-  return "";
+/** Ambil href tautan dari marks TipTap (mark `type: 'link'`). */
+function hrefDariMarks(node: unknown): string | undefined {
+  const marks = (node as { marks?: unknown }).marks;
+  if (!Array.isArray(marks)) return undefined;
+  for (const m of marks) {
+    if (m && typeof m === "object" && (m as { type?: unknown }).type === "link") {
+      const href = (m as { attrs?: { href?: unknown } }).attrs?.href;
+      if (typeof href === "string" && href.trim()) return href.trim();
+    }
+  }
+  return undefined;
 }
 
-/** Dokumen TipTap (`{ content:[...] }`) → blok FE; abaikan node tak terdukung. */
+/** Rangkai segmen inline (teks + href) dari node TipTap secara rekursif;
+ *  segmen berurutan dgn href sama digabung. */
+function extractInline(node: unknown, out: RawInlineNode[], hrefWaris?: string): void {
+  if (!node || typeof node !== "object") return;
+  const n = node as { text?: unknown; content?: unknown };
+  const href = hrefDariMarks(node) ?? hrefWaris;
+  if (typeof n.text === "string" && n.text) {
+    const akhir = out[out.length - 1];
+    if (akhir && akhir.href === href) akhir.teks += n.text; // gabung segmen se-href
+    else out.push(href ? { teks: n.text, href } : { teks: n.text });
+    return;
+  }
+  if (Array.isArray(n.content)) for (const c of n.content) extractInline(c, out, href);
+}
+
+/** Dokumen TipTap (`{ content:[...] }`) → blok FE; simpan level heading & tautan inline. */
 function tiptapToBlocks(doc: RawTiptapDoc): RawContentBlock[] {
   const out: RawContentBlock[] = [];
   for (const node of doc.content ?? []) {
     if (!node || typeof node !== "object") continue;
     const tipe = TIPTAP_TIPE[String((node as { type?: unknown }).type)];
     if (!tipe) continue;
-    const teks = extractTeks(node).trim();
-    if (teks) out.push({ tipe, teks });
+    const segmen: RawInlineNode[] = [];
+    extractInline(node, segmen);
+    const teks = segmen.map((s) => s.teks).join("").trim();
+    if (!teks) continue;
+    const blok: RawContentBlock = { tipe, teks };
+    if (tipe === "subjudul") {
+      const lvl = Number((node as { attrs?: { level?: unknown } }).attrs?.level);
+      blok.level = Number.isFinite(lvl) && lvl >= 1 && lvl <= 6 ? lvl : 2;
+    }
+    if (segmen.some((s) => s.href)) blok.anak = segmen;
+    out.push(blok);
   }
   return out;
 }
@@ -174,6 +203,7 @@ export function toArtikel(raw: RawArticle): Artikel {
     image: raw.featuredMedia?.url ?? "",
     ringkasan: raw.excerpt ?? "",
     isi,
+    tag: raw.tags?.map((t) => t.name).filter(Boolean) ?? [],
   };
 }
 

@@ -132,10 +132,20 @@ export interface RawMediaRef {
   alt?: string | null;
 }
 
+/** Segmen teks inline; `href` ada bila segmen adalah tautan anchor. */
+export interface RawInlineNode {
+  teks: string;
+  href?: string;
+}
+
 /** Blok isi artikel/halaman kompatibel FE. */
 export interface RawContentBlock {
   tipe: "paragraf" | "subjudul" | "kutipan";
   teks: string;
+  /** Level heading (1..6) bila `tipe === "subjudul"`, dari heading TipTap. */
+  level?: number;
+  /** Segmen inline (teks + href) bila ada tautan di dalam blok. */
+  anak?: RawInlineNode[];
 }
 
 /** Dokumen TipTap mentah (`{ type:'doc', content:[...] }`) — bentuk `body` di cms-media. */
