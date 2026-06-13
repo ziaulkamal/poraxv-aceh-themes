@@ -29,3 +29,6 @@ dist-ssr
 # Internal working notes & tooling (tidak untuk dipublikasikan)
 todos.txt
 *.skill
+
+# Gambar contoh/referensi desain di root (tidak dipakai aplikasi)
+/sorotan-*.png
