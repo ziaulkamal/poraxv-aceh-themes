@@ -1,0 +1,27 @@
+# Konteks build ramping
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+node_modules
+dist
+dist-ssr
+
+# Lingkungan lokal (VITE_* di-inject sebagai build-arg di compose)
+.env
+.env.*
+!.env.example
+
+# Dokumentasi, contoh, & artefak
+*.md
+docs
+todos.txt
+*.skill
+screenshot.jpg
+sorotan-*.png
+*.local
+
+.DS_Store
+Thumbs.db

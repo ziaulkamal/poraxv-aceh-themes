@@ -1,0 +1,32 @@
+# =============================================================================
+# WEB — PoraAcehJaya-FE (React/Vite) — stack Docker MANDIRI
+# SPA statis via Nginx. Tanpa infra (data via API CORE & CMS di host).
+# URL backend DI-INLINE saat build → ubah = rebuild image.
+#
+# Jalankan:  docker compose up -d --build
+# =============================================================================
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_CMS_API_URL: ${WEB_CMS_API_URL:-http://localhost:3001/api/v1}
+        VITE_CMS_WS_URL: ${WEB_CMS_WS_URL:-http://localhost:3001}
+        VITE_SIMPORA_API_URL: ${WEB_SIMPORA_API_URL:-http://localhost:8081/api/v1}
+        VITE_SIMPORA_ICON_BASE: ${WEB_SIMPORA_ICON_BASE:-http://localhost:8081}
+    image: pora-web:latest
+    restart: unless-stopped
+    ports:
+      - "${WEB_HTTP_PORT:-8080}:80"
+    networks: [ web-net ]
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+    deploy:
+      resources:
+        limits: { cpus: "0.50", memory: 128M }
+
+networks:
+  web-net:
+    driver: bridge
