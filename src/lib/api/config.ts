@@ -5,6 +5,15 @@ const trim = (url: string): string => url.replace(/\/+$/, "");
 
 const simporaUrl = trim(import.meta.env.VITE_SIMPORA_API_URL ?? "http://localhost:8000/api/v1");
 
+/**
+ * Data contoh (data/*.ts) hanya untuk development atau build demo
+ * (VITE_DEMO_DATA=true). Di produksi daftar kosong tetap kosong — section
+ * menampilkan keterangan "belum ada", bukan jadwal/medali/berita palsu.
+ * Identitas event, sosial media, branding, dan ikon cabor tetap boleh jatuh
+ * ke data bundel karena itu data asli, bukan contoh.
+ */
+export const DEMO_DATA = import.meta.env.DEV || import.meta.env.VITE_DEMO_DATA === "true";
+
 /** URL kedua backend + gateway socket; isi via `.env` (lihat .env.example). */
 export const API_CONFIG = {
   simporaUrl,

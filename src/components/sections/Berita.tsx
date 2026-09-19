@@ -5,6 +5,7 @@ import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { BeritaCard } from "./BeritaCard";
+import { EmptyNote } from "../ui/EmptyNote";
 import { useBeritaCards } from "../../lib/api/hooks";
 
 /** Section berita: kabar terbaru seputar event dalam grid responsif tiga kolom. */
@@ -26,7 +27,8 @@ export function Berita() {
           />
         </Reveal>
 
-        <div className="mt-10 grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+        {beritaList.length === 0 && <EmptyNote className="mt-10">Belum ada berita. Nantikan kabar terbaru dari panitia.</EmptyNote>}
+        <div className="mt-10 grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] empty:hidden">
           {beritaList.map((berita, i) => (
             <Reveal key={berita.judul} delay={i * 120} direction="up">
               <BeritaCard item={berita} />

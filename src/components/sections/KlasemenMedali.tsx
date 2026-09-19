@@ -91,6 +91,13 @@ export function KlasemenMedali() {
                   </tr>
                 );
               })}
+              {klasemenList.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-ink-muted">
+                    Belum ada perolehan medali. Klasemen tampil setelah pertandingan pertama selesai.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </Reveal>

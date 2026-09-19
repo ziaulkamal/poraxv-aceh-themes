@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_SIMPORA_API_URL?: string;
   readonly VITE_CMS_API_URL?: string;
   readonly VITE_CMS_WS_URL?: string;
+  /** "true" = tampilkan data contoh saat API kosong (build demo). Default produksi: tidak. */
+  readonly VITE_DEMO_DATA?: string;
 }
 
 interface ImportMeta {

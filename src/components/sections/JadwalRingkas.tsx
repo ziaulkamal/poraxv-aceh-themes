@@ -7,6 +7,7 @@ import { KontingenIcons } from "../ui/KontingenIcons";
 import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
+import { EmptyNote } from "../ui/EmptyNote";
 import { useJadwalRingkas } from "../../lib/api/hooks";
 
 /** Section cuplikan jadwal: daftar agenda terdekat, stack di mobile & sebaris di sm ke atas. */
@@ -32,7 +33,8 @@ export function JadwalRingkas() {
           </div>
         </Reveal>
 
-        <div className="mt-10 flex flex-col gap-3">
+        {jadwalList.length === 0 && <EmptyNote className="mt-10">Jadwal pertandingan akan diumumkan panitia.</EmptyNote>}
+        <div className="mt-10 flex flex-col gap-3 empty:hidden">
           {jadwalList.map((item, i) => (
             <Reveal key={i} delay={i * 80} direction="left">
             <div

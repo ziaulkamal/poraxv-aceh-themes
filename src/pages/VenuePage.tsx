@@ -4,9 +4,11 @@ import { Container } from "../components/ui/Container";
 import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Badge } from "../components/ui/Badge";
+import { EmptyNote } from "../components/ui/EmptyNote";
 import { cn } from "../lib/cn";
 import { useVenueList } from "../lib/api/hooks";
 import { venueDetail } from "../data/pages";
+import { DEMO_DATA } from "../lib/api/config";
 
 /** Laman venue: viewer besar yang bisa dikontrol — geser, autoplay, thumbnail. */
 export function VenuePage() {
@@ -15,8 +17,9 @@ export function VenuePage() {
   const [main, setMain] = useState(true); // autoplay
 
   const total = venueList.length;
-  const next = useCallback(() => setAktif((i) => (i + 1) % total), [total]);
-  const prev = () => setAktif((i) => (i - 1 + total) % total);
+  // total 0 -> modulo 0 = NaN; jangan bergerak sama sekali.
+  const next = useCallback(() => { if (total) setAktif((i) => (i + 1) % total); }, [total]);
+  const prev = () => { if (total) setAktif((i) => (i - 1 + total) % total); };
 
   // Autoplay tiap 5 detik, jeda saat pengguna menonaktifkan.
   useEffect(() => {
@@ -35,8 +38,30 @@ export function VenuePage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [next]);
 
-  const venue = venueList[aktif];
-  const detail = venueDetail[venue.nama];
+  // Daftar bisa menyusut setelah data API datang -> jaga indeks tetap valid.
+  const venue = venueList[aktif] ?? venueList[0];
+
+  if (!venue) {
+    return (
+      <>
+        <Seo title="Venue & Arena" description="Arena-arena yang menjadi panggung pertandingan PORA Aceh Jaya." />
+        <PageHeader
+          breadcrumb="Venue"
+          eyebrow="Lokasi Pertandingan"
+          title="Venue & Arena"
+          description="Jelajahi arena-arena yang menjadi panggung perjuangan para atlet PORA XV."
+        />
+        <section className="bg-surface py-12 dark:bg-page-bg sm:py-16">
+          <Container>
+            <EmptyNote>Daftar venue sedang disiapkan panitia.</EmptyNote>
+          </Container>
+        </section>
+      </>
+    );
+  }
+
+  // Kapasitas/deskripsi contoh per nama venue hanya saat demo.
+  const detail = DEMO_DATA ? venueDetail[venue.nama] : undefined;
 
   return (
     <>

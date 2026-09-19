@@ -5,9 +5,8 @@ import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { Reveal } from "../ui/Reveal";
 import { CountdownTimer } from "../ui/CountdownTimer";
-import { caborList, venueList } from "../../data/content";
 import { kontingenList } from "../../data/kontingen";
-import { useEventInfo } from "../../lib/api/hooks";
+import { useCaborList, useEventInfo, useVenueList } from "../../lib/api/hooks";
 import type { EventInfo } from "../../types";
 import maskot from "../../assets/brand/maskot.png";
 
@@ -19,16 +18,17 @@ function rentangTanggal(event: EventInfo): string {
   return `${mulai.getDate()} – ${selesai.getDate()} ${bulan} ${selesai.getFullYear()}`;
 }
 
-/** Ringkasan angka penting event untuk strip kepercayaan di bawah CTA. */
-const stats = [
-  { value: kontingenList.length, label: "Kontingen" },
-  { value: caborList.length, label: "Cabang Olahraga" },
-  { value: venueList.length, label: "Venue" },
-];
-
 /** Hero pembuka: identitas event, hitung mundur, dan CTA di atas latar gelap. */
 export function Hero() {
   const event = useEventInfo();
+  const caborList = useCaborList();
+  const venueList = useVenueList();
+  // Ringkasan angka penting (data nyata; 0 = belum diisi -> disembunyikan).
+  const stats = [
+    { value: kontingenList.length, label: "Kontingen" },
+    { value: caborList.length, label: "Cabang Olahraga" },
+    { value: venueList.length, label: "Venue" },
+  ].filter((s) => s.value > 0);
   return (
     <section
       id="beranda"

@@ -3,6 +3,7 @@ import { X, ChevronLeft, ChevronRight, Heart, MessageCircle, Grid3x3, LayoutGrid
 import { Container } from "../components/ui/Container";
 import { Seo } from "../components/Seo";
 import { PageHeader } from "../components/ui/PageHeader";
+import { EmptyNote } from "../components/ui/EmptyNote";
 import { cn } from "../lib/cn";
 import type { Foto } from "../data/pages";
 import { useGaleriFoto } from "../lib/api/hooks";
@@ -126,6 +127,8 @@ export function GaleriPage() {
               </button>
             </div>
           </div>
+
+          {galeriFoto.length === 0 && <EmptyNote>Belum ada foto. Galeri diperbarui panitia selama event berlangsung.</EmptyNote>}
 
           {/* Konsep 1: Feed Instagram — grid kotak rapat */}
           {konsep === "ig" && (

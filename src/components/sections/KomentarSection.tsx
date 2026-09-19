@@ -4,6 +4,7 @@ import { cn } from "../../lib/cn";
 import { LogoAvatar } from "../ui/LogoAvatar";
 import { komentarList, type Komentar } from "../../data/pages";
 import { useKirimKomentar, useKomentar, useSukaKomentar } from "../../lib/api/hooks";
+import { DEMO_DATA } from "../../lib/api/config";
 
 /* ----------------------------- util ----------------------------- */
 
@@ -257,7 +258,8 @@ export function KomentarSection({ slug }: { slug?: string }) {
   const { data: live, isSuccess } = useKomentar(slug ?? "");
   const kirim = useKirimKomentar(slug ?? "");
   const suka = useSukaKomentar();
-  const [daftar, setDaftar] = useState<Komentar[]>(komentarList);
+  // Komentar contoh hanya saat demo; produksi mulai kosong sampai API menjawab.
+  const [daftar, setDaftar] = useState<Komentar[]>(DEMO_DATA ? komentarList : []);
   const [liked, setLiked] = useState<Set<string>>(new Set());
   const [moderasi, setModerasi] = useState(false);
 

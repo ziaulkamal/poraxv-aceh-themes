@@ -5,7 +5,8 @@ import { SectionHeading } from "../ui/SectionHeading";
 import { IconBox } from "../ui/IconBox";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
-import { useCaborList, useKlasemenList, useSocialLinks, useVenueList } from "../../lib/api/hooks";
+import { useCaborList, useSocialLinks, useVenueList } from "../../lib/api/hooks";
+import { kontingenList } from "../../data/kontingen";
 
 /**
  * Section Tentang: ringkas makna event + profil tuan rumah + statistik kunci.
@@ -16,11 +17,13 @@ export function TentangPora() {
   const socials = useSocialLinks();
   const caborList = useCaborList();
   const venueList = useVenueList();
-  const klasemenList = useKlasemenList();
   const statistik = [
     { icon: Trophy, value: `${caborList.length}`, label: "Cabang Olahraga", tone: "merah" as const, glow: "bg-merah/25" },
-    { icon: Users, value: `${klasemenList.length}+`, label: "Kontingen Kab/Kota", tone: "hijau" as const, glow: "bg-hijau/30" },
-    { icon: MapPin, value: `${venueList.length}`, label: "Venue Pertandingan", tone: "emas" as const, glow: "bg-emas/30" },
+    // Kontingen dari daftar peserta bundel (sama dgn pita logo), bukan baris klasemen
+    // yang kosong sebelum ada medali.
+    { icon: Users, value: `${kontingenList.length}`, label: "Kontingen Kab/Kota", tone: "hijau" as const, glow: "bg-hijau/30" },
+    // Venue belum diinput -> "—" alih-alih angka 0.
+    { icon: MapPin, value: venueList.length ? `${venueList.length}` : "—", label: "Venue Pertandingan", tone: "emas" as const, glow: "bg-emas/30" },
     { icon: Flame, value: "2.500+", label: "Atlet Bertanding", tone: "ink" as const, glow: "bg-ink/15" },
   ];
   return (

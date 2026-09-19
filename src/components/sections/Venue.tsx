@@ -5,6 +5,7 @@ import { button } from "../ui/Button";
 import { Reveal } from "../ui/Reveal";
 import { SectionGlow } from "../ui/SectionGlow";
 import { VenueCard } from "./VenueCard";
+import { EmptyNote } from "../ui/EmptyNote";
 import { useVenueList } from "../../lib/api/hooks";
 
 /** Section venue: galeri arena pertandingan di Aceh Jaya dalam grid auto-fit. */
@@ -25,7 +26,8 @@ export function Venue() {
           />
         </Reveal>
 
-        <div className="mt-10 grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+        {venueList.length === 0 && <EmptyNote className="mt-10">Daftar venue sedang disiapkan panitia.</EmptyNote>}
+        <div className="mt-10 grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] empty:hidden">
           {venueList.map((venue, i) => (
             <Reveal key={venue.nama} delay={(i % 3) * 110} direction="up">
               <VenueCard item={venue} />
