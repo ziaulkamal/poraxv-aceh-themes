@@ -145,9 +145,9 @@ export function KlasemenPage() {
                         <span
                           className={cn(
                             "inline-flex size-7 items-center justify-center rounded-full text-sm font-bold",
-                            row.peringkat === 1 && "bg-emas-medali text-ink",
-                            row.peringkat === 2 && "bg-perak text-ink",
-                            row.peringkat === 3 && "bg-perunggu text-surface",
+                            row.peringkat === 1 && "bg-emas-medali text-surface-dark",
+                            row.peringkat === 2 && "bg-perak text-surface-dark",
+                            row.peringkat === 3 && "bg-perunggu text-surface-dark",
                             row.peringkat > 3 && "text-ink-muted",
                           )}
                         >
