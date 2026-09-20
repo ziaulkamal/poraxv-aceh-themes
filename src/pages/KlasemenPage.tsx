@@ -108,7 +108,7 @@ export function KlasemenPage() {
           <div className="mt-6 overflow-x-auto rounded-lg shadow-card dark:ring-1 dark:ring-white/10">
             <table className="w-full min-w-[620px] border-collapse bg-surface text-left">
               <thead>
-                <tr className="bg-ink text-surface">
+                <tr className="bg-surface-dark text-white">
                   <th className="px-4 py-3 text-sm font-semibold">
                     <button onClick={() => toggleSort("peringkat")} className="inline-flex items-center gap-1 hover:text-emas">
                       # <ArrowUpDown className="size-3" />

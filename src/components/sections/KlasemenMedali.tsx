@@ -37,7 +37,7 @@ export function KlasemenMedali() {
         <Reveal direction="up" className="mt-10 overflow-x-auto rounded-lg shadow-card dark:ring-1 dark:ring-white/10">
           <table className="w-full min-w-[560px] border-collapse bg-surface text-left">
             <thead>
-              <tr className="bg-ink text-surface">
+              <tr className="bg-surface-dark text-white">
                 <th className="px-4 py-3 text-sm font-semibold">#</th>
                 <th className="px-4 py-3 text-sm font-semibold">Kontingen</th>
                 {kolomMedali.map((k) => (
