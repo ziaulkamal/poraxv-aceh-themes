@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Hero } from "../components/sections/Hero";
 import { Kontingen } from "../components/sections/Kontingen";
+import { PimpinanDaerah } from "../components/sections/PimpinanDaerah";
 import { TentangPora } from "../components/sections/TentangPora";
 import { CabangOlahraga } from "../components/sections/CabangOlahraga";
 import { JadwalRingkas } from "../components/sections/JadwalRingkas";
@@ -50,6 +51,7 @@ export function Home() {
         jsonLd={jsonLd}
       />
       <Hero />
+      <PimpinanDaerah />
       <Kontingen />
       <TentangPora />
       <CabangOlahraga />
