@@ -6,6 +6,7 @@ import { SearchModal } from "./SearchModal";
 import { MenuLink } from "./MenuLink";
 import { useBranding, useMenus } from "../../lib/api/hooks";
 import type { MenuLinkType, MenuNode } from "../../lib/api/types";
+import { saringMenu } from "../../data/tampilan";
 
 /** Bangun node menu fallback (dipakai saat API CMS belum tersedia). */
 const fb = (label: string, type: MenuLinkType, url: string, i: number): MenuNode => ({
@@ -50,7 +51,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { data: menus } = useMenus();
-  const mainMenu = menus?.main?.length ? menus.main : FALLBACK_MAIN;
+  const mainMenu = saringMenu(menus?.main?.length ? menus.main : FALLBACK_MAIN);
   const branding = useBranding();
   const brandLogo = dark ? branding.logoMainDark : branding.logoMainLight;
 

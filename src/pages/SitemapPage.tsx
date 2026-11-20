@@ -8,10 +8,11 @@ import {
 } from "lucide-react";
 import { Container } from "../components/ui/Container";
 import { PageHeader } from "../components/ui/PageHeader";
+import { sectionTersembunyi } from "../data/tampilan";
 
 type Tautan = { label: string; to: string; section?: string; Icon: LucideIcon };
 
-const grup: {
+const semuaGrup: {
   judul: string;
   Icon: LucideIcon;
   /** kelas warna aksen: [bg lembut, teks] */
@@ -54,6 +55,11 @@ const grup: {
     ],
   },
 ];
+
+const grup = semuaGrup.map((g) => ({
+  ...g,
+  tautan: g.tautan.filter((t) => !sectionTersembunyi(t.section)),
+}));
 
 const jumlahTautan = grup.reduce((n, g) => n + g.tautan.length, 0);
 

@@ -10,6 +10,7 @@ import { KlasemenMedali } from "../components/sections/KlasemenMedali";
 import { Venue } from "../components/sections/Venue";
 import { Berita } from "../components/sections/Berita";
 import { Seo } from "../components/Seo";
+import { TAMPILKAN_TENTANG } from "../data/tampilan";
 import { useEventInfo, useSeoConfig } from "../lib/api/hooks";
 
 /** Landing PORA: merakit seluruh section beranda. */
@@ -53,7 +54,7 @@ export function Home() {
       <Hero />
       <PimpinanDaerah />
       <Kontingen />
-      <TentangPora />
+      {TAMPILKAN_TENTANG && <TentangPora />}
       <CabangOlahraga />
       <JadwalRingkas />
       <KlasemenMedali />

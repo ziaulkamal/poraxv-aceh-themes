@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronsUp } from "lucide-react";
 import { cn } from "../../lib/cn";
+import { sectionTersembunyi } from "../../data/tampilan";
 
 /**
  * Urutan target navigasi antar-section (sesuai urutan DOM di App).
  * Footer ikut sebagai target terakhir agar bisa "turun" sampai dasar halaman.
  */
 const targets = [
+  // (disaring di bawah: section tersembunyi tidak ikut navigasi)
   { id: "beranda", label: "Beranda" },
   { id: "kontingen", label: "Kontingen" },
   { id: "tentang", label: "Tentang" },
@@ -16,7 +18,7 @@ const targets = [
   { id: "venue", label: "Venue" },
   { id: "berita", label: "Berita" },
   { id: "footer", label: "Footer" },
-];
+].filter((t) => !sectionTersembunyi(t.id));
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;

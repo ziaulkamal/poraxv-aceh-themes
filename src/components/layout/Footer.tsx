@@ -4,6 +4,7 @@ import { Container } from "../ui/Container";
 import { MenuLink } from "./MenuLink";
 import { SocialIcon } from "./SocialIcon";
 import { useBranding, useEventInfo, useMenus } from "../../lib/api/hooks";
+import { saringMenu } from "../../data/tampilan";
 import type { MenuLinkType, MenuNode } from "../../lib/api/types";
 
 /** Bangun node menu footer fallback (saat API CMS belum tersedia). */
@@ -64,7 +65,7 @@ export function Footer() {
   const event = useEventInfo();
   const branding = useBranding();
   const { data: menus } = useMenus();
-  const footerCols = menus?.footer?.length ? menus.footer : FALLBACK_FOOTER;
+  const footerCols = saringMenu(menus?.footer?.length ? menus.footer : FALLBACK_FOOTER);
   const bottomLinks = menus?.footerBottom?.length ? menus.footerBottom : FALLBACK_BOTTOM;
 
   // Susun grid-template-columns footer dari layout CMS (atau override mentah).
